@@ -71,11 +71,15 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
     private let session = AVCaptureSession()
     private var didEmitCode = false
     private var previewLayer: AVCaptureVideoPreviewLayer?
+    private let sessionQueue = DispatchQueue(label: "com.piccopalo.barcode.session")
+    private var isConfigured = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        configureSession()
+        sessionQueue.async { [weak self] in
+            self?.configureSession()
+        }
     }
 
     override func viewDidLayoutSubviews() {
@@ -86,15 +90,17 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         didEmitCode = false
-        if !session.isRunning {
-            session.startRunning()
+        sessionQueue.async { [weak self] in
+            guard let self, self.isConfigured, self.session.isRunning == false else { return }
+            self.session.startRunning()
         }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if session.isRunning {
-            session.stopRunning()
+        sessionQueue.async { [weak self] in
+            guard let self, self.session.isRunning else { return }
+            self.session.stopRunning()
         }
     }
 
@@ -104,19 +110,25 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
             configureAuthorizedSession()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-                DispatchQueue.main.async {
-                    guard let self else { return }
-                    if granted {
+                guard let self else { return }
+                if granted {
+                    self.sessionQueue.async {
                         self.configureAuthorizedSession()
-                    } else {
-                        self.onFailure?("Barcode niet herkend. Probeer opnieuw of voer het eiwit handmatig in.")
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.onFailure?("Camera-toegang ontbreekt. Geef toegang in Instellingen en probeer opnieuw.")
                     }
                 }
             }
         case .denied, .restricted:
-            onFailure?("Camera-toegang ontbreekt. Geef toegang in Instellingen en probeer opnieuw.")
+            DispatchQueue.main.async { [weak self] in
+                self?.onFailure?("Camera-toegang ontbreekt. Geef toegang in Instellingen en probeer opnieuw.")
+            }
         @unknown default:
-            onFailure?("Barcode niet herkend. Probeer opnieuw of voer het eiwit handmatig in.")
+            DispatchQueue.main.async { [weak self] in
+                self?.onFailure?("Barcode niet herkend. Probeer opnieuw of voer het eiwit handmatig in.")
+            }
         }
     }
 
@@ -124,7 +136,9 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
         guard let videoDevice = AVCaptureDevice.default(for: .video),
               let videoInput = try? AVCaptureDeviceInput(device: videoDevice),
               session.canAddInput(videoInput) else {
-            onFailure?("Barcode niet herkend. Probeer opnieuw of voer het eiwit handmatig in.")
+            DispatchQueue.main.async { [weak self] in
+                self?.onFailure?("Barcode niet herkend. Probeer opnieuw of voer het eiwit handmatig in.")
+            }
             return
         }
 
@@ -139,9 +153,14 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
 
         let preview = AVCaptureVideoPreviewLayer(session: session)
         preview.videoGravity = .resizeAspectFill
-        preview.frame = view.layer.bounds
-        view.layer.addSublayer(preview)
-        previewLayer = preview
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            preview.frame = self.view.layer.bounds
+            self.view.layer.addSublayer(preview)
+            self.previewLayer = preview
+        }
+
+        isConfigured = true
     }
 
     func metadataOutput(
@@ -157,7 +176,14 @@ private final class BarcodeScannerController: UIViewController, AVCaptureMetadat
         }
 
         didEmitCode = true
-        session.stopRunning()
-        onBarcodeDetected?(code)
+        sessionQueue.async { [weak self] in
+            guard let self else { return }
+            if self.session.isRunning {
+                self.session.stopRunning()
+            }
+            DispatchQueue.main.async {
+                self.onBarcodeDetected?(code)
+            }
+        }
     }
 }
