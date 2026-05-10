@@ -24,6 +24,15 @@ struct DesignTokens {
         static let layerB = Color(red: 0.910, green: 0.722, blue: 0.447)  // semolina
         static let layerC = Color(red: 0.792, green: 0.478, blue: 0.353)  // tomato sauce
         static let layerD = Color(red: 0.608, green: 0.820, blue: 0.455)  // basil/herb
+
+        // Feedback
+        static let success = Color(red: 0.608, green: 0.820, blue: 0.455)  // #9BD174
+        static let error = Color(red: 0.910, green: 0.482, blue: 0.361)  // #E87B5C
+        static let warning = Color(red: 0.910, green: 0.824, blue: 0.473)  // #E8D279
+        static let info = Color(red: 0.792, green: 0.478, blue: 0.353)  // #C77A5B
+
+        // Additional colors
+        static let accent = Color(red: 0.608, green: 0.820, blue: 0.455)  // #9BD174
     }
 
     struct Typography {
