@@ -289,4 +289,23 @@ class HealthManager: NSObject, ObservableObject {
             return "Onbekend"
         }
     }
+    
+    /// Fetches today's step count with a callback
+    /// Used by NotificationService for background notifications
+    func getTodaySteps(completion: @escaping (Double) -> Void) {
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        let endOfDay = Date()
+        let todayPredicate = HKQuery.predicateForSamples(withStart: startOfDay, end: endOfDay)
+        
+        Task {
+            let stepsResult = await safeCumulativeSum(
+                label: "steps",
+                for: .stepCount,
+                unit: HKUnit.count(),
+                predicate: todayPredicate
+            )
+            completion(stepsResult.value)
+        }
+    }
 }

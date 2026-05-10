@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var viewModel: ProteinViewModel
+    @EnvironmentObject var healthManager: HealthManager
     @FocusState private var proteinInputFocused: Bool
     @State private var showProteinPicker = false
 
@@ -111,6 +112,52 @@ struct HomeView: View {
                                 .padding(.horizontal, DesignTokens.Spacing.lg)
                             }
                         }
+
+                        // Stappen section
+                        VStack(spacing: DesignTokens.Spacing.md) {
+                            SectionLabel("Stappen vandaag", icon: "figure.walk")
+
+                            StyledCard {
+                                VStack(spacing: DesignTokens.Spacing.md) {
+                                    HStack(spacing: DesignTokens.Spacing.md) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("\(Int(healthManager.steps))")
+                                                .font(.system(size: 28, weight: .semibold))
+                                                .foregroundColor(DesignTokens.Colors.green)
+                                            
+                                            Text("van 8.000 stappen")
+                                                .font(.system(size: 12, weight: .semibold))
+                                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                                .tracking(0.4)
+                                                .textCase(.uppercase)
+                                        }
+                                        
+                                        Spacer()
+                                        
+                                        VStack(alignment: .trailing, spacing: 4) {
+                                            Text(String(format: "%.0f%%", (Double(healthManager.steps) / 8000) * 100))
+                                                .font(.system(size: 24, weight: .semibold))
+                                                .foregroundColor(DesignTokens.Colors.green)
+                                            
+                                            if healthManager.isAuthorized {
+                                                Text("✓ Gekoppeld")
+                                                    .font(.system(size: 11, weight: .semibold))
+                                                    .foregroundColor(DesignTokens.Colors.green)
+                                            } else {
+                                                Text("Niet gekoppeld")
+                                                    .font(.system(size: 11, weight: .semibold))
+                                                    .foregroundColor(DesignTokens.Colors.tomato)
+                                            }
+                                        }
+                                    }
+                                    
+                                    ProgressBar(percentage: (Double(healthManager.steps) / 8000) * 100, size: 60, showGlow: false)
+                                        .frame(height: 20)
+                                }
+                            }
+                            .padding(.horizontal, DesignTokens.Spacing.lg)
+                        }
+                        .padding(.bottom, DesignTokens.Spacing.xxl)
 
                         Spacer()
                             .frame(height: DesignTokens.Spacing.xxl)
