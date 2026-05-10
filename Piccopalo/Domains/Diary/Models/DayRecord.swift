@@ -8,6 +8,7 @@ struct DayRecord: Codable, Identifiable {
     var proteinGoal: Double
     var proteinConsumed: Double
     var entries: [ProteinEntry] = []
+    var stepsCount: Double?
 
     enum CodingKeys: String, CodingKey {
         case date
@@ -16,6 +17,7 @@ struct DayRecord: Codable, Identifiable {
         case proteinGoal
         case proteinConsumed
         case entries
+        case stepsCount
     }
 
     init(
@@ -24,7 +26,8 @@ struct DayRecord: Codable, Identifiable {
         activityFactor: Double,
         proteinGoal: Double,
         proteinConsumed: Double,
-        entries: [ProteinEntry] = []
+        entries: [ProteinEntry] = [],
+        stepsCount: Double? = nil
     ) {
         self.date = date
         self.weight = weight
@@ -32,6 +35,7 @@ struct DayRecord: Codable, Identifiable {
         self.proteinGoal = proteinGoal
         self.proteinConsumed = proteinConsumed
         self.entries = entries
+        self.stepsCount = stepsCount
     }
 
     init(from decoder: Decoder) throws {
@@ -42,5 +46,6 @@ struct DayRecord: Codable, Identifiable {
         proteinGoal = try container.decode(Double.self, forKey: .proteinGoal)
         proteinConsumed = try container.decode(Double.self, forKey: .proteinConsumed)
         entries = try container.decodeIfPresent([ProteinEntry].self, forKey: .entries) ?? []
+        stepsCount = try container.decodeIfPresent(Double.self, forKey: .stepsCount)
     }
 }

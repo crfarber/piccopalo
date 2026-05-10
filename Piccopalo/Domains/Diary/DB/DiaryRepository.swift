@@ -135,7 +135,8 @@ private struct SupabaseDayRow: Codable {
             activityFactor: activityFactor,
             proteinGoal: proteinGoal,
             proteinConsumed: proteinConsumed,
-            entries: entries
+            entries: entries,
+            stepsCount: nil  // Steps are fetched on-demand via HealthKit
         )
     }
 }

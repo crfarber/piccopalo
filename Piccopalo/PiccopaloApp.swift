@@ -20,7 +20,19 @@ struct PiccopaloApp: App {
                 .environmentObject(proteinViewModel)
                 .environmentObject(accountViewModel)
                 .environmentObject(authViewModel)
-                     .environmentObject(healthManager)
+                .environmentObject(healthManager)
+                .onAppear {
+                    initializeNotifications()
+                }
+        }
+    }
+    
+    private func initializeNotifications() {
+        NotificationService.shared.requestPermissions { granted in
+            if granted {
+                NotificationService.shared.setupBackgroundStepMonitoring()
+                NotificationService.shared.scheduleDailyReminder(stepsGoal: 8000, healthManager: healthManager)
+            }
         }
     }
 }

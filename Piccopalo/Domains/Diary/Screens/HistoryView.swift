@@ -197,6 +197,12 @@ struct HistoryRowView: View {
                 Text("\(grams(record.proteinConsumed))g van \(grams(record.proteinGoal))g")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(DesignTokens.Colors.textMuted)
+                
+                if let stepsCount = record.stepsCount, stepsCount > 0 {
+                    Text("\(Int(round(stepsCount))) stappen")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(DesignTokens.Colors.green)
+                }
             }
 
             Spacer(minLength: 8)
