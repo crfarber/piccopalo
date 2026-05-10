@@ -2,23 +2,29 @@ import SwiftData
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Label("Today", systemImage: "house.fill")
-                }
+    @EnvironmentObject private var authViewModel: AuthViewModel
 
-            HistoryView()
-                .tabItem {
-                    Label("History", systemImage: "calendar")
-                }
-            AccountView()
-                .tabItem {
-                    Label("Account", systemImage: "person.fill")
-                }
+    var body: some View {
+        if authViewModel.isAuthenticated {
+            TabView {
+                HomeView()
+                    .tabItem {
+                        Label("Today", systemImage: "house.fill")
+                    }
+
+                HistoryView()
+                    .tabItem {
+                        Label("History", systemImage: "calendar")
+                    }
+                AccountView()
+                    .tabItem {
+                        Label("Account", systemImage: "person.fill")
+                    }
+            }
+            .tint(.green)
+        } else {
+            LoginView()
         }
-        .tint(.green)
     }
 }
 
@@ -27,5 +33,6 @@ struct ContentView: View {
     ContentView()
         .environmentObject(protein)
         .environmentObject(account)
+        .environmentObject(AuthViewModel())
         .modelContainer(container)
 }

@@ -7,6 +7,7 @@ struct PiccopaloApp: App {
 
     @StateObject private var proteinViewModel: ProteinViewModel
     @StateObject private var accountViewModel: AccountViewModel
+    @StateObject private var authViewModel = AuthViewModel()
 
     init() {
         let diary = persistence.diaryRepository
@@ -25,6 +26,7 @@ struct PiccopaloApp: App {
             ContentView()
                 .environmentObject(proteinViewModel)
                 .environmentObject(accountViewModel)
+                .environmentObject(authViewModel)
         }
         .modelContainer(persistence.container)
     }

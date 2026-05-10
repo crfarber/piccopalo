@@ -4,6 +4,7 @@ import SwiftUI
 struct AccountView: View {
     @EnvironmentObject var accountViewModel: AccountViewModel
     @EnvironmentObject var proteinViewModel: ProteinViewModel
+    @EnvironmentObject var authViewModel: AuthViewModel
     @FocusState private var focusedField: Field?
 
     private enum Field { case name, weight, height }
@@ -153,6 +154,28 @@ struct AccountView: View {
                             }
                             .padding(.horizontal, DesignTokens.Spacing.lg)
                     }
+
+                    // Uitloggen
+                    VStack(spacing: DesignTokens.Spacing.md) {
+                        SectionLabel("Account", icon: "lock.fill")
+
+                        StyledCard {
+                            Button {
+                                Task { await authViewModel.signOut() }
+                            } label: {
+                                HStack {
+                                    Text("Uitloggen")
+                                        .foregroundColor(DesignTokens.Colors.tomato)
+                                    Spacer()
+                                    Image(systemName: "rectangle.portrait.and.arrow.right")
+                                        .foregroundColor(DesignTokens.Colors.tomato)
+                                }
+                                .padding(.vertical, DesignTokens.Spacing.md)
+                            }
+                        }
+                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                    }
+
                     Spacer()
                         .frame(height: DesignTokens.Spacing.xl)
                 }
@@ -192,5 +215,6 @@ private extension View {
     AccountView()
         .environmentObject(account)
         .environmentObject(protein)
+        .environmentObject(AuthViewModel())
         .modelContainer(container)
 }
