@@ -138,6 +138,25 @@ struct AccountView: View {
                     VStack(spacing: DesignTokens.Spacing.md) {
                     
                         SectionLabel("Activiteit", icon: "dumbbell.fill")
+                        NavigationLink(destination: HealthDetailsView()) {
+                            HStack {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(DesignTokens.Colors.accent)
+                                
+                                Text("Gezondheidsgegevens")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.accent)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                            }
+                            .padding(.horizontal, DesignTokens.Spacing.lg)
+                            .padding(.vertical, DesignTokens.Spacing.md)
+                        }
+                        
                             StyledCard {
                                 FormMenuRow(
                                     title: "Activiteit",

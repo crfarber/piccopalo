@@ -12,6 +12,7 @@ struct PiccopaloApp: App {
     )
 
     @StateObject private var authViewModel = AuthViewModel()
+    @StateObject private var healthManager = HealthManager()
 
     var body: some Scene {
         WindowGroup {
@@ -19,6 +20,7 @@ struct PiccopaloApp: App {
                 .environmentObject(proteinViewModel)
                 .environmentObject(accountViewModel)
                 .environmentObject(authViewModel)
+                     .environmentObject(healthManager)
         }
     }
 }
