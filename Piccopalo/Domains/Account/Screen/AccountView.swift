@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 struct AccountView: View {
@@ -210,11 +209,3 @@ private extension View {
     }
 }
 
-#Preview {
-    let (container, protein, account) = PersistenceController.previewStack()
-    AccountView()
-        .environmentObject(account)
-        .environmentObject(protein)
-        .environmentObject(AuthViewModel())
-        .modelContainer(container)
-}

@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 struct ContentView: View {
@@ -22,17 +21,12 @@ struct ContentView: View {
                     }
             }
             .tint(.green)
+            .toolbarBackground(DesignTokens.Colors.background, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+            .toolbarColorScheme(.dark, for: .tabBar)
         } else {
             LoginView()
         }
     }
 }
 
-#Preview {
-    let (container, protein, account) = PersistenceController.previewStack()
-    ContentView()
-        .environmentObject(protein)
-        .environmentObject(account)
-        .environmentObject(AuthViewModel())
-        .modelContainer(container)
-}

@@ -7,7 +7,7 @@ The app combines:
 - Profile-driven goal calculation (weight x activity factor)
 - Daily intake logging
 - Day-level history and correction
-- Local persistence through SwiftData
+- Local persistence through 
 
 ## Main Navigation
 The app has three tabs:
@@ -26,7 +26,7 @@ App behavior:
 - A profile-change notification is emitted so dependent screens can refresh calculations.
 
 Persistence:
-- UserProfileEntity is upserted in SwiftData (single active profile strategy).
+- UserProfileEntity is upserted in  (single active profile strategy).
 
 User-visible result:
 - Updated goal calculations are reflected in Today and related views.
@@ -110,9 +110,9 @@ Role:
 - Stores day snapshots and totals used by Today, History, and Detail.
 
 ### Persistence layer
-- SwiftData is the local source of truth.
+-  is the local source of truth.
 - PersistenceController initializes ModelContainer and repositories.
-- Legacy UserDefaults data is migrated once through SwiftDataMigration.
+- Legacy UserDefaults data is migrated once through Migration.
 
 ## Product Rules
 1. Daily protein goal is weight x activityFactor.

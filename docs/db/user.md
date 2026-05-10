@@ -6,7 +6,7 @@ Het **user**-domein bewaart de **profielgegevens** van de gebruiker: naam, gewic
 
 ## Datamodel (`AccountData` + viewmodel)
 
-[`AccountViewModel`](../../Piccopalo/ViewModels/AccountViewModel.swift) houdt de bron van waarheid in de UI. Persistentie loopt via **`UserProfileRepositoryProtocol`** (`loadAccount()` / `saveAccount(_:)`), gebacked door SwiftData. Het Codable-type **`AccountData`** (in hetzelfde bestand) is de payload voor repository en migratie.
+[`AccountViewModel`](../../Piccopalo/ViewModels/AccountViewModel.swift) houdt de bron van waarheid in de UI. Persistentie loopt via **`UserProfileRepositoryProtocol`** (`loadAccount()` / `saveAccount(_:)`) en praat via de repository-laag met **Supabase**. Het Codable-type **`AccountData`** (in hetzelfde bestand) is de payload voor repository en API.
 
 | Veld | Betekenis |
 |------|-----------|
@@ -21,19 +21,19 @@ Het **user**-domein bewaart de **profielgegevens** van de gebruiker: naam, gewic
 
 Na `saveAccount()` wordt **`Notification.Name.piccopaloAccountDidChange`** gepost zodat andere viewmodels (bijv. eiwit-home) kunnen herberekenen of herladen.
 
-## Opslag (SwiftData)
+## Opslag
 
-- **Entity**: **`UserProfileEntity`** — `@Model` in [`UserProfileEntity.swift`](../../Piccopalo/Persistence/UserProfileEntity.swift); velden parallel aan `AccountData`.
-- **Strategie**: één actief profiel (`fetchLimit(1)` / upsert in **`SwiftDataUserProfileRepository`**).
-- **Migratie**: bestaande `piccopalo_account` (UserDefaults JSON) wordt bij eerste run geïmporteerd indien SwiftData leeg is; flag `swiftDataMigrated_v1` — zie [database.md](database.md).
+- **Bron van waarheid**: Supabase.
+- **Strategie**: één profiel per gebruiker, gekoppeld aan `auth.users.id`.
+- **Upsert**: profieldata wordt altijd per ingelogde gebruiker opgeslagen zodat accounts gescheiden blijven.
 
 ### Legacy (`AccountStorage`)
 
-Als er nog geen profiel in SwiftData staat en `piccopalo_account` ontbreekt, kan `AccountViewModel.loadAccount()` nog **`UserModel`** uit UserDefaults-key **`account`** laden (`AccountStorage`) en daarna naar de repository schrijven.
+Als er nog oude data aanwezig is, kan `AccountViewModel.loadAccount()` nog **`UserModel`** uit UserDefaults-key **`account`** laden (`AccountStorage`).
 
 ## Relatie met diary
 
 - Account levert **default** `activityFactor` en **gewicht** voor nieuwe dagen en voor herberekening van doelen waar de app dat toepast.
-- Een **opgeslagen dag** (`DayRecord` / `DiaryDayEntity`) kan een **afwijkende** `activityFactor` per dag vasthouden na de eerste log of na handmatige wijziging in detail.
+- Een **opgeslagen dag** (`DayRecord`) kan een **afwijkende** `activityFactor` per dag vasthouden na de eerste log of na handmatige wijziging in detail.
 
 Zie [diary.md](diary.md) voor dagrecords en [database.md](database.md) voor de totale persistencelaag.

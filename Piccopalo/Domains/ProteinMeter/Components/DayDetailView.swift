@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 struct DayDetailView: View {
@@ -101,7 +100,7 @@ struct DayDetailView: View {
         }
         .onDisappear {
             if currentRecord.date == proteinViewModel.today {
-                proteinViewModel.loadToday()
+                Task { await proteinViewModel.refresh() }
             }
         }
     }
@@ -382,20 +381,3 @@ struct DayDetailView: View {
     }
 }
 
-#Preview {
-    let (container, protein, account) = PersistenceController.previewStack()
-    NavigationView {
-        DayDetailView(
-            record: DayRecord(
-                date: "2026-05-01",
-                weight: 78,
-                activityFactor: 1.4,
-                proteinGoal: 140,
-                proteinConsumed: 152
-            )
-        )
-    }
-    .environmentObject(account)
-    .environmentObject(protein)
-    .modelContainer(container)
-}
