@@ -27,7 +27,7 @@ final class AuthViewModel: ObservableObject {
 
     private func observeAuthChanges() {
         Task {
-            for await (_, session) in await auth.authStateChanges {
+            for await (_, session) in auth.authStateChanges {
                 self.session = session
             }
         }

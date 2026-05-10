@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 struct ProteinSourcePickerView: View {
@@ -158,8 +157,3 @@ struct SearchBar: View {
     }
 }
 
-#Preview {
-    let (container, protein, _) = PersistenceController.previewStack()
-    ProteinSourcePickerView(viewModel: protein)
-        .modelContainer(container)
-}

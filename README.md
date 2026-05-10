@@ -136,7 +136,7 @@ Onder `Domains/Account/Onboarding/` staan onder andere `NameView`, `LengteView`,
 ## Technische context (voor afstemming)
 
 - Platform: **SwiftUI**, iOS-app in map `Piccopalo/`.
-- Data: **SwiftData** (lokaal) met repositories; eenmalige migratie van oude UserDefaults-keys (`piccopalo_records`, `piccopalo_account`). Optioneel legacy **`account`** via `AccountStorage` bij eerste load.
+- Data: **** (lokaal) met repositories; eenmalige migratie van oude UserDefaults-keys (`piccopalo_records`, `piccopalo_account`). Optioneel legacy **`account`** via `AccountStorage` bij eerste load.
 
 ---
 

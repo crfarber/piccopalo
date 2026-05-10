@@ -1,4 +1,3 @@
-import SwiftData
 import SwiftUI
 
 struct HomeView: View {
@@ -155,9 +154,3 @@ struct StatBox: View {
 }
 
 
-#Preview {
-    let (container, protein, _) = PersistenceController.previewStack()
-    HomeView()
-        .environmentObject(protein)
-        .modelContainer(container)
-}

@@ -108,7 +108,7 @@ I want my data to survive app restarts,
 so that tracking is reliable.
 
 Tasks:
-1. Persist profile and day data in SwiftData.
+1. Persist profile and day data in .
 2. Keep repositories as data-access boundary.
 3. Use one shared ModelContainer for app runtime.
 
@@ -120,7 +120,7 @@ so that I do not lose history.
 Tasks:
 1. Import legacy UserDefaults account and diary payload once.
 2. Set migration flag to avoid duplicate imports.
-3. Preserve behavior when SwiftData is already populated.
+3. Preserve behavior when  is already populated.
 
 ## Traceability
 Reference docs:

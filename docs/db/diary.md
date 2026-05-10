@@ -37,14 +37,11 @@ Elke losse inname bevat:
 - **Geschiedenis**: lijst en weekstrip lezen records via `ProteinViewModel.record(for:)` / `allRecords()` (gesorteerd op datum, nieuwste eerst).
 - **Dagdetail**: handmatig gram en activiteit per dag; persist via `ProteinViewModel.saveDayRecord(_:)`.
 
-## Opslag (SwiftData)
+## Opslag
 
-- **Entity**: **`DiaryDayEntity`** — `@Model` in [`DiaryDayEntity.swift`](../../Piccopalo/Persistence/DiaryDayEntity.swift); unieke **`dateISO`**; velden parallel aan `DayRecord`.
-- **Entity**: **`DiaryProteinEntryEntity`** — `@Model` met relatie naar `DiaryDayEntity` (1 dag -> meerdere entries).
-- **Protocol**: **`DiaryRepositoryProtocol`** — `day(for:)`, `save(_:)`, `allDaysSorted()`.
-- **Implementatie**: **`SwiftDataDiaryRepository`** — mapt `DayRecord` ↔ entity; sortering `dateISO` aflopend.
-
-Eenmalige import van vroeger opgeslagen `piccopalo_records` (UserDefaults) gebeurt in **`SwiftDataMigration`**; zie [database.md](database.md).
+- **Bron van waarheid**: Supabase/PostgreSQL.
+- **Repository**: `DiaryRepositoryProtocol` wordt ingevuld door een `SupabaseDiaryRepository`.
+- **Mapping**: `DayRecord` en `ProteinEntry` worden gemapt naar API-payloads voor `diary_days` en `diary_entries`.
 
 ## Gedrag (productregels, kort)
 
@@ -54,5 +51,6 @@ Eenmalige import van vroeger opgeslagen `piccopalo_records` (UserDefaults) gebeu
 - **Food picker**: gebruiker voert hoeveelheid in (`g` of `ml`) en de app rekent automatisch:
 	- `proteinAmount = (quantity / 100) × proteinPer100`
 - **Dagtotaal**: `proteinConsumed` wordt opgebouwd vanuit losse entries en blijft als snapshot zichtbaar.
+- **Remote sync**: records worden per gebruiker opgeslagen met `user_id` als scheiding.
 
 Zie ook [database.md](database.md) voor de totale laag en [user.md](user.md) voor het account dat de default levert.

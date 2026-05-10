@@ -4,28 +4,78 @@ Dit document beschrijft **waar app-data leeft**, hoe de lagen in elkaar zitten, 
 
 ## Doel van de laag
 
-- **Lokaal**: betrouwbare opslag van **dagrecords** (eiwit per dag), losse **inname-entries** per dag, en **gebruikersprofiel** (account) via **SwiftData** (SQLite).
-- **Later**: dezelfde **repository-contracten** kunnen worden vervangen door een implementatie die HTTP naar een API praat; de UI hoeft dan minimaal te wijzigen.
+- **Huidig**: app-data leeft remote in **Supabase/PostgreSQL**.
+- **Transport**: de app praat met Supabase via **Alamofire**.
+- **Architectuur**: de repository-contracten blijven de schakel tussen UI en data-bron.
 
 ## Huidige situatie
 
-### SwiftData (bron van waarheid)
-
-- **`ModelContainer`**: aangemaakt in [`PersistenceController`](../../Piccopalo/Persistence/PersistenceController.swift) met schema **`DiaryDayEntity`**, **`DiaryProteinEntryEntity`**, **`UserProfileEntity`**.
-- **`.modelContainer(...)`**: gehangen op `WindowGroup` in [`PiccopaloApp`](../../Piccopalo/PiccopaloApp.swift).
-- **Repositories** (main actor, `ModelContext` = `container.mainContext`):
-  - **`SwiftDataDiaryRepository`** — implementeert `DiaryRepositoryProtocol`
-  - **`SwiftDataUserProfileRepository`** — implementeert `UserProfileRepositoryProtocol`
+- **Auth**: gebruikers loggen in via **Supabase Auth**.
+- **Data-opslag**: dagrecords, losse inname-entries en gebruikersprofiel leven in **Supabase-tabellen**.
+- **Transport**: de app praat met Supabase via **Alamofire**.
+- **Beveiliging**: row level security zorgt ervoor dat een gebruiker alleen eigen data ziet.
 
 ```text
 PiccopaloApp
-  └── .modelContainer(shared)
-         └── PersistenceController.shared
-                ├── diaryRepository
-                └── userProfileRepository
+  └── auth + repositories
+         └── Supabase Auth + Supabase API
+                ├── diary repository
+                └── user profile repository
 ```
 
-ViewModels krijgen deze repositories geïnjecteerd (`ProteinViewModel`, `AccountViewModel`).
+ViewModels krijgen repository-implementaties geïnjecteerd (`ProteinViewModel`, `AccountViewModel`).
+
+## Supabase-opzet
+
+Supabase is de bron van waarheid voor alle gebruikersdata. De app gebruikt:
+
+- **Supabase Auth** voor login en sessies.
+- **Supabase PostgreSQL** voor opslag van account- en dagdata.
+- **Alamofire** voor HTTP-calls richting Supabase REST endpoints.
+- **RLS** om af te dwingen dat een gebruiker alleen eigen data ziet.
+
+### Tabellen
+
+De data wordt logisch verdeeld over drie tabellen:
+
+- **`user_profiles`**: één profiel per gebruiker.
+- **`diary_days`**: één record per gebruiker per datum.
+- **`diary_entries`**: losse inname-entries per dag.
+
+De relationele sleutel is steeds de ingelogde Supabase-gebruiker via `auth.users.id`.
+
+### RLS
+
+Row Level Security is verplicht zodat de client nooit andermans data kan lezen of schrijven.
+
+Basisregel:
+
+- `user_profiles.id = auth.uid()`
+- `diary_days.user_id = auth.uid()`
+- `diary_entries.user_id = auth.uid()`
+
+Dat betekent dat elke query automatisch afgekapt wordt tot de huidige gebruiker.
+
+### API-verantwoordelijkheden
+
+De API-laag wordt verantwoordelijk voor:
+
+- inloggen en sessieherstel
+- profiel ophalen en opslaan
+- dagrecords ophalen en opslaan
+- losse entries ophalen en opslaan
+- eventueel later: sync, conflict resolution en offline queueing
+
+### Alamofire-opzet
+
+Alamofire is geschikt als transportlaag voor de Supabase REST-calls. De API-laag kan dan bestaan uit:
+
+- een kleine `APIClient` met de base URL van Supabase
+- een `Session` met auth headers
+- requests voor `select`, `insert`, `update`, `upsert` en `delete`
+- decodering van JSON naar domeinmodellen zoals `AccountData`, `DayRecord` en `ProteinEntry`
+
+Dat houdt de repository-implementaties dun: zij vertalen alleen tussen domeinmodellen en API-payloads.
 
 ### Quantity-based logging (g/ml)
 
@@ -37,26 +87,11 @@ De app berekent eiwit automatisch met:
 
 De berekende waarde wordt als losse inname-entry aan de dag gehangen en verwerkt in `proteinConsumed`.
 
-### Migratie van UserDefaults (eenmalig)
-
-Oude installs hadden JSON in UserDefaults:
-
-| Sleutel | Inhoud |
-|---------|--------|
-| `piccopalo_records` | Dictionary `datum (yyyy-MM-dd)` → `DayRecord` |
-| `piccopalo_account` | `AccountData` (naam, gewicht, lengte, `activityFactor`) |
-
-[`SwiftDataMigration`](../../Piccopalo/Persistence/SwiftDataMigration.swift) draait bij app-start **als** `swiftDataMigrated_v1` nog niet `true` is:
-
-1. Als er al SwiftData-rijen zijn → alleen de flag zetten (geen dubbele import).
-2. Anders UserDefaults-data importeren naar entities, `modelContext.save()`, daarna **`swiftDataMigrated_v1 = true`**.
-3. Daarna: **alleen** repositories / SwiftData voor dag- en accountdata.
-
 `Notification.Name.piccopaloAccountDidChange` wordt na elke account-save nog steeds gepost zodat andere onderdelen (zoals eiwit-home) kunnen reageren.
 
 ### Legacy account (`account` key)
 
-Heel oude profieldata kan onder UserDefaults-key **`account`** (`UserModel` via `AccountStorage`) staan. Als SwiftData nog geen profiel heeft, laadt [`AccountViewModel`](../../Piccopalo/ViewModels/AccountViewModel.swift) dat pad en schrijft direct door naar de repository.
+Heel oude profieldata kan onder UserDefaults-key **`account`** (`UserModel` via `AccountStorage`) staan. Dat is alleen nog relevant voor oude installs.
 
 ## Gerelateerde documenten
 
@@ -65,4 +100,4 @@ Heel oude profieldata kan onder UserDefaults-key **`account`** (`UserModel` via 
 
 ## Onderhoud
 
-Pas dit bestand aan bij wijzigingen aan **container-setup**, **migratiestrategie**, of **repository-grenzen**.
+Pas dit bestand aan bij wijzigingen aan **auth-flow**, **Supabase-tabellen**, **RLS**, **API-laag**, of **repository-grenzen**.

@@ -1,11 +1,11 @@
-import SwiftData
 import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var viewModel: ProteinViewModel
+    @State private var records: [DayRecord] = []
 
-    var records: [DayRecord] {
-        viewModel.allRecords()
+    private var recordsByDate: [String: DayRecord] {
+        Dictionary(uniqueKeysWithValues: records.map { ($0.date, $0) })
     }
 
     private var lastSevenDays: [Date] {
@@ -62,6 +62,12 @@ struct HistoryView: View {
             .scrollDismissesKeyboard(.immediately)
             .background(DesignTokens.Colors.background)
             .navigationBarHidden(true)
+            .task {
+                await reloadRecords()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .piccopaloAccountDidChange)) { _ in
+                Task { await reloadRecords() }
+            }
         }
     }
 
@@ -92,7 +98,11 @@ struct HistoryView: View {
     private var weekStrip: some View {
         HStack(spacing: DesignTokens.Spacing.sm) {
             ForEach(lastSevenDays, id: \.self) { date in
-                HistoryWeekDayColumn(date: date)
+                let key = HistoryFormatting.isoString(from: date)
+                let consumed = recordsByDate[key]?.proteinConsumed ?? 0
+                let goal = recordsByDate[key]?.proteinGoal ?? viewModel.proteinGoal
+                let percentage = goal > 0 ? min((consumed / goal) * 100, 100) : 0
+                HistoryWeekDayColumn(date: date, percentage: percentage)
             }
         }
     }
@@ -112,27 +122,17 @@ struct HistoryView: View {
         }
         .padding(DesignTokens.Spacing.lg)
     }
+
+    private func reloadRecords() async {
+        records = await viewModel.allRecords()
+    }
 }
 
 // MARK: - Week strip
 
 private struct HistoryWeekDayColumn: View {
     let date: Date
-    @EnvironmentObject private var viewModel: ProteinViewModel
-
-    private var metrics: (consumed: Double, goal: Double) {
-        let key = HistoryFormatting.isoString(from: date)
-        if let r = viewModel.record(for: key) {
-            return (r.proteinConsumed, r.proteinGoal)
-        }
-        return (0, viewModel.proteinGoal)
-    }
-
-    private var percentage: Double {
-        let g = metrics.goal
-        guard g > 0 else { return 0 }
-        return min((metrics.consumed / g) * 100, 100)
-    }
+    let percentage: Double
 
     var body: some View {
         VStack(spacing: DesignTokens.Spacing.sm) {
@@ -214,9 +214,3 @@ struct HistoryRowView: View {
     }
 }
 
-#Preview {
-    let (container, protein, _) = PersistenceController.previewStack()
-    HistoryView()
-        .environmentObject(protein)
-        .modelContainer(container)
-}
