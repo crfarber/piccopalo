@@ -1,0 +1,16 @@
+{
+  "source": "/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Onboarding/OnboardingView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Onboarding",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 5
+        }
+      }
+    ]
+  },
+  "version": 1
+}

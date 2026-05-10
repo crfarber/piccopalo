@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct HistoryView: View {
@@ -7,37 +8,159 @@ struct HistoryView: View {
         viewModel.allRecords()
     }
 
+    private var lastSevenDays: [Date] {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        return (0..<7).compactMap { i in
+            cal.date(byAdding: .day, value: i - 6, to: today)
+        }
+    }
+
     var body: some View {
         NavigationView {
-            Group {
-                if records.isEmpty {
-                    emptyState
-                } else {
-                    List(records) { record in
-                        NavigationLink(destination: DayDetailView(record: record)) {
-                            HistoryRowView(record: record)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    header
+
+                    weekStrip
+                        .padding(.top, DesignTokens.Spacing.lg)
+                        .padding(.bottom, DesignTokens.Spacing.md)
+
+                    if records.isEmpty {
+                        emptyState
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, DesignTokens.Spacing.xxl)
+                    } else {
+                        StyledCard {
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("Alle dagen")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .tracking(0.4)
+                                    .textCase(.uppercase)
+                                    .foregroundStyle(DesignTokens.Colors.textMuted)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.bottom, DesignTokens.Spacing.md)
+
+                                ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
+                                    NavigationLink(destination: DayDetailView(record: record)) {
+                                        HistoryRowView(record: record)
+                                    }
+                                    .buttonStyle(.plain)
+
+                                    if index < records.count - 1 {
+                                        Divider()
+                                            .background(Color.white.opacity(0.08))
+                                    }
+                                }
+                            }
                         }
                     }
-                    .listStyle(.insetGrouped)
                 }
+                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.bottom, DesignTokens.Spacing.xxl)
             }
-            .navigationTitle("Geschiedenis")
+            .scrollDismissesKeyboard(.immediately)
+            .background(DesignTokens.Colors.background)
+            .navigationBarHidden(true)
+        }
+    }
+
+    private var header: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+                Text("Geschiedenis")
+                    .font(.custom(DesignTokens.Typography.displayFont, size: 34, relativeTo: .largeTitle))
+                    .foregroundStyle(DesignTokens.Colors.cream)
+
+                Text("De laatste 7 dagen")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(DesignTokens.Colors.textMuted)
+            }
+
+            Spacer()
+
+            Button(action: {}) {
+                Image(systemName: "calendar")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundStyle(DesignTokens.Colors.text)
+            }
+            .accessibilityLabel("Kalender")
+        }
+        .padding(.top, DesignTokens.Spacing.md)
+    }
+
+    private var weekStrip: some View {
+        HStack(spacing: DesignTokens.Spacing.sm) {
+            ForEach(lastSevenDays, id: \.self) { date in
+                HistoryWeekDayColumn(date: date)
+            }
         }
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: DesignTokens.Spacing.md) {
             Text("📅")
-                .font(.system(size: 60))
+                .font(.system(size: 56))
             Text("Nog geen data")
-                .font(.title2).fontWeight(.semibold)
+                .font(.title2)
+                .fontWeight(.semibold)
+                .foregroundStyle(DesignTokens.Colors.text)
             Text("Voeg vandaag je eerste eiwitinname toe!")
-                .font(.subheadline).foregroundColor(.secondary)
+                .font(.subheadline)
+                .foregroundStyle(DesignTokens.Colors.textMuted)
                 .multilineTextAlignment(.center)
         }
-        .padding()
+        .padding(DesignTokens.Spacing.lg)
     }
 }
+
+// MARK: - Week strip
+
+private struct HistoryWeekDayColumn: View {
+    let date: Date
+    @EnvironmentObject private var viewModel: ProteinViewModel
+
+    private var metrics: (consumed: Double, goal: Double) {
+        let key = HistoryFormatting.isoString(from: date)
+        if let r = viewModel.record(for: key) {
+            return (r.proteinConsumed, r.proteinGoal)
+        }
+        return (0, viewModel.proteinGoal)
+    }
+
+    private var percentage: Double {
+        let g = metrics.goal
+        guard g > 0 else { return 0 }
+        return min((metrics.consumed / g) * 100, 100)
+    }
+
+    var body: some View {
+        VStack(spacing: DesignTokens.Spacing.sm) {
+            Text(HistoryFormatting.weekStripLabel(for: date))
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(DesignTokens.Colors.textMuted)
+
+            VerticalProgressBar(
+                percentage: percentage,
+                width: 14,
+                height: 52,
+                cornerRadius: 6,
+                style: .statusTint,
+                showGlow: false,
+                outlineLineWidth: 1,
+                outlineOpacity: 0.16
+            )
+
+            Text("\(Int(round(percentage)))%")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(DesignTokens.Colors.text)
+                .monospacedDigit()
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Row
 
 struct HistoryRowView: View {
     let record: DayRecord
@@ -48,25 +171,52 @@ struct HistoryRowView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(record.date)
-                .font(.headline)
-            HStack {
-                Text("Doel: \(formatted(record.proteinGoal))g")
-                    .font(.subheadline).foregroundColor(.secondary)
-                Spacer()
-                Text("Gegeten: \(formatted(record.proteinConsumed))g")
-                    .font(.subheadline).foregroundColor(.secondary)
+        HStack(alignment: .center, spacing: DesignTokens.Spacing.md) {
+            VerticalProgressBar(
+                percentage: percentage,
+                width: 15,
+                height: 56,
+                cornerRadius: 6,
+                style: .statusTint,
+                showGlow: false,
+                outlineLineWidth: 1,
+                outlineOpacity: 0.16
+            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 6) {
+                    Text(HistoryFormatting.primaryDayLabel(isoDate: record.date))
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(DesignTokens.Colors.text)
+
+                    Text(HistoryFormatting.dayAndMonthNL(isoDate: record.date))
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                }
+
+                Text("\(grams(record.proteinConsumed))g van \(grams(record.proteinGoal))g")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundStyle(DesignTokens.Colors.textMuted)
             }
-            ProgressBarView(percentage: percentage)
-                .frame(height: 10)
-            Text("\(formatted(percentage))%")
-                .font(.caption).foregroundColor(.secondary)
+
+            Spacer(minLength: 8)
+
+            Text("\(Int(round(percentage)))%")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundStyle(DesignTokens.Colors.text)
+                .monospacedDigit()
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, DesignTokens.Spacing.sm)
     }
 
-    private func formatted(_ value: Double) -> String {
+    private func grams(_ value: Double) -> String {
         String(format: "%.0f", value)
     }
+}
+
+#Preview {
+    let (container, protein, _) = PersistenceController.previewStack()
+    HistoryView()
+        .environmentObject(protein)
+        .modelContainer(container)
 }

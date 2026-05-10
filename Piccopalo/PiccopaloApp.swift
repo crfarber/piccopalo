@@ -1,9 +1,24 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct PiccopaloApp: App {
-    @StateObject private var proteinViewModel = ProteinViewModel()
-    @StateObject private var accountViewModel = AccountViewModel()
+    private let persistence = PersistenceController.shared
+
+    @StateObject private var proteinViewModel: ProteinViewModel
+    @StateObject private var accountViewModel: AccountViewModel
+
+    init() {
+        let diary = persistence.diaryRepository
+        let user = persistence.userProfileRepository
+        _proteinViewModel = StateObject(wrappedValue: ProteinViewModel(
+            diaryRepository: diary,
+            userProfileRepository: user
+        ))
+        _accountViewModel = StateObject(wrappedValue: AccountViewModel(
+            userProfileRepository: user
+        ))
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -11,6 +26,6 @@ struct PiccopaloApp: App {
                 .environmentObject(proteinViewModel)
                 .environmentObject(accountViewModel)
         }
+        .modelContainer(persistence.container)
     }
 }
-

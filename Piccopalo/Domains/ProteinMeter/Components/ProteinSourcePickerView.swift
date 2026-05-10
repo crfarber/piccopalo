@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct ProteinSourcePickerView: View {
@@ -6,13 +7,23 @@ struct ProteinSourcePickerView: View {
 
     @State private var searchText = ""
     @State private var selectedSource: ProteinSource?
-    @State private var customProtein: String = ""
+    @State private var consumedQuantity: String = ""
 
     var filteredSources: [ProteinSource] {
         if searchText.isEmpty {
             return defaultProteinSources
         }
         return defaultProteinSources.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+    }
+
+    private var quantityValue: Double {
+        let normalized = consumedQuantity.replacingOccurrences(of: ",", with: ".")
+        return Double(normalized) ?? 0
+    }
+
+    private var calculatedProtein: Double {
+        guard let source = selectedSource, quantityValue > 0 else { return 0 }
+        return (quantityValue / 100) * source.proteinPer100g
     }
 
     var body: some View {
@@ -25,13 +36,16 @@ struct ProteinSourcePickerView: View {
                 if selectedSource == nil {
                     // List of sources
                     List(filteredSources) { source in
-                        Button(action: { selectedSource = source }) {
+                        Button(action: {
+                            selectedSource = source
+                            consumedQuantity = ""
+                        }) {
                             HStack {
                                 Text(source.name)
                                     .font(.body)
                                     .foregroundColor(.primary)
                                 Spacer()
-                                Text("\(String(format: "%.0f", source.proteinPer100g))g")
+                                Text("\(String(format: "%.1f", source.proteinPer100g))g / 100\(source.unit.symbol)")
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                             }
@@ -61,30 +75,35 @@ struct ProteinSourcePickerView: View {
                             .cornerRadius(10)
 
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Protein Amount (grams)")
+                                Text("Consumed Amount")
                                     .font(.headline)
 
                                 HStack {
-                                    TextField("0", text: $customProtein)
+                                    TextField("0", text: $consumedQuantity)
                                         .keyboardType(.decimalPad)
                                         .textFieldStyle(RoundedBorderTextFieldStyle())
                                         .font(.title3)
 
-                                    Text("g")
+                                    Text(selectedSource!.unit.symbol)
                                         .font(.headline)
                                         .foregroundColor(.secondary)
                                 }
 
-                                Text("Default: \(String(format: "%.0f", selectedSource!.proteinPer100g))g per 100g")
+                                Text("Nutrition: \(String(format: "%.1f", selectedSource!.proteinPer100g))g protein per 100\(selectedSource!.unit.symbol)")
                                     .font(.caption)
                                     .foregroundColor(.secondary)
+
+                                Text("Calculated protein: \(String(format: "%.1f", calculatedProtein))g")
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.green)
                             }
                             .padding()
 
                             Button(action: addAndDismiss) {
                                 HStack {
                                     Image(systemName: "plus.circle.fill")
-                                    Text("Add Protein")
+                                    Text("Add To Today")
                                         .fontWeight(.semibold)
                                 }
                                 .frame(maxWidth: .infinity)
@@ -93,7 +112,7 @@ struct ProteinSourcePickerView: View {
                                 .foregroundColor(.white)
                                 .cornerRadius(10)
                             }
-                            .disabled(customProtein.isEmpty || (Double(customProtein) ?? 0) <= 0)
+                            .disabled(quantityValue <= 0)
 
                             Spacer()
                         }
@@ -112,11 +131,8 @@ struct ProteinSourcePickerView: View {
     }
 
     private func addAndDismiss() {
-        let amount = Double(customProtein) ?? 0
-        guard amount > 0 else { return }
-
-        viewModel.proteinInput = String(format: "%.0f", amount)
-        viewModel.addProtein()
+        guard let source = selectedSource, quantityValue > 0 else { return }
+        viewModel.addProtein(source: source, quantity: quantityValue)
         dismiss()
     }
 }
@@ -143,5 +159,7 @@ struct SearchBar: View {
 }
 
 #Preview {
-    ProteinSourcePickerView(viewModel: ProteinViewModel())
+    let (container, protein, _) = PersistenceController.previewStack()
+    ProteinSourcePickerView(viewModel: protein)
+        .modelContainer(container)
 }

@@ -1,0 +1,88 @@
+{
+  "source": "/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Diary/Screens/HistoryView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Alle dagen",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "Kalender",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Geschiedenis",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 71
+        }
+      },
+      {
+        "comment": "",
+        "key": "De laatste 7 dagen",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "📅",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "Nog geen data",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 104
+        }
+      },
+      {
+        "comment": "",
+        "key": "Voeg vandaag je eerste eiwitinname toe!",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 108
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 154
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld%%",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@g van %@g",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 197
+        }
+      }
+    ]
+  },
+  "version": 1
+}

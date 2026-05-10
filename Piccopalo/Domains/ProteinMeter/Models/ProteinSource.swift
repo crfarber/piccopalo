@@ -1,9 +1,25 @@
 import Foundation
 
+enum ProteinSourceUnit: String, Codable {
+    case grams = "g"
+    case milliliters = "ml"
+
+    var symbol: String {
+        rawValue
+    }
+}
+
 struct ProteinSource: Identifiable {
     let id = UUID()
     let name: String
+    let unit: ProteinSourceUnit
     let proteinPer100g: Double
+
+    init(name: String, proteinPer100g: Double, unit: ProteinSourceUnit = .grams) {
+        self.name = name
+        self.proteinPer100g = proteinPer100g
+        self.unit = unit
+    }
 }
 
 let defaultProteinSources: [ProteinSource] = [
@@ -38,7 +54,7 @@ let defaultProteinSources: [ProteinSource] = [
     // Eggs & Dairy
     ProteinSource(name: "Egg (Whole)", proteinPer100g: 13),
     ProteinSource(name: "Egg White", proteinPer100g: 11),
-    ProteinSource(name: "Milk", proteinPer100g: 3.2),
+    ProteinSource(name: "Milk", proteinPer100g: 3.2, unit: .milliliters),
     ProteinSource(name: "Greek Yogurt", proteinPer100g: 10),
     ProteinSource(name: "Yogurt (Plain)", proteinPer100g: 3.5),
     ProteinSource(name: "Cottage Cheese", proteinPer100g: 11),

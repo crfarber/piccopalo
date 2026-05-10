@@ -1,0 +1,96 @@
+{
+  "source": "/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Screen/AccountView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Account",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 156
+        }
+      },
+      {
+        "comment": "",
+        "key": "Daily goal: %@g",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 41
+        }
+      },
+      {
+        "comment": "",
+        "key": "Eiwitdoel",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 55
+        }
+      },
+      {
+        "comment": "",
+        "key": "g/dag",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 65
+        }
+      },
+      {
+        "comment": "",
+        "key": "Naam",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 87
+        }
+      },
+      {
+        "comment": "",
+        "key": "Naam",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 90
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gewicht (kg)",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 102
+        }
+      },
+      {
+        "comment": "",
+        "key": "0",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Lengte (cm)",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 118
+        }
+      },
+      {
+        "comment": "",
+        "key": "0",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 121
+        }
+      },
+      {
+        "comment": "",
+        "key": "Activiteit",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 140
+        }
+      }
+    ]
+  },
+  "version": 1
+}

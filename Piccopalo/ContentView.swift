@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 struct ContentView: View {
@@ -22,7 +23,9 @@ struct ContentView: View {
 }
 
 #Preview {
+    let (container, protein, account) = PersistenceController.previewStack()
     ContentView()
-        .environmentObject(ProteinViewModel())
-        .environmentObject(AccountViewModel())
+        .environmentObject(protein)
+        .environmentObject(account)
+        .modelContainer(container)
 }

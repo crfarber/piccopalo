@@ -1,0 +1,18 @@
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Onboarding/NameView.swift":
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/NameView.d"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/NameView.swiftconstvalues"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/NameView.swiftdeps"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/NameView.dia"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/NameView.o"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Persistence/PersistenceController.swift":
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/PersistenceController.dia"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/PersistenceController.swiftconstvalues"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/PersistenceController.d"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/PersistenceController.o"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/PersistenceController.swiftdeps"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Persistence/SwiftDataUserProfileRepository.swift":
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataUserProfileRepository.swiftconstvalues"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataUserProfileRepository.o"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataUserProfileRepository.dia"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataUserProfileRepository.swiftdeps"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataUserProfileRepository.d"

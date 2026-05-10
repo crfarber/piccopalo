@@ -1,0 +1,18 @@
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Persistence/SwiftDataDiaryRepository.swift":
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataDiaryRepository.swiftdeps"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataDiaryRepository.o"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataDiaryRepository.dia"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataDiaryRepository.d"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/SwiftDataDiaryRepository.swiftconstvalues"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Onboarding/OnboardingView.swift":
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/OnboardingView.d"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/OnboardingView.swiftconstvalues"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/OnboardingView.o"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/OnboardingView.swiftdeps"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/OnboardingView.dia"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Models/UserModel.swift":
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserModel.d"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserModel.swiftdeps"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserModel.dia"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserModel.swiftconstvalues"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserModel.o"

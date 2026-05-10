@@ -1,0 +1,18 @@
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Persistence/UserProfileEntity.swift":
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserProfileEntity.swiftdeps"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserProfileEntity.o"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserProfileEntity.swiftconstvalues"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserProfileEntity.d"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/UserProfileEntity.dia"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Account/Storage/AccountStorage.swift":
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/AccountStorage.dia"
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/AccountStorage.swiftconstvalues"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/AccountStorage.o"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/AccountStorage.d"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/AccountStorage.swiftdeps"
+"/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/Diary/Screens/HistoryView.swift":
+  const-values: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/HistoryView.swiftconstvalues"
+  diagnostics: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/HistoryView.dia"
+  object: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/HistoryView.o"
+  dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/HistoryView.d"
+  swift-dependencies: "/Users/delta-n/Git/piccopalo/Piccopalo/.derivedData/Build/Intermediates.noindex/Piccopalo.build/Debug-iphoneos/Piccopalo.build/Objects-normal/arm64/HistoryView.swiftdeps"

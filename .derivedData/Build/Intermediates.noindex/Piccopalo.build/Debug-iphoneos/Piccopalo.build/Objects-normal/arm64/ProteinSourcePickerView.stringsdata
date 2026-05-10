@@ -1,0 +1,96 @@
+{
+  "source": "/Users/delta-n/Git/piccopalo/Piccopalo/Piccopalo/Domains/ProteinMeter/Components/ProteinSourcePickerView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Choose Food",
+        "location": {
+          "startingColumn": 54,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Amount",
+        "location": {
+          "startingColumn": 70,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "%@g",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 35
+        }
+      },
+      {
+        "comment": "",
+        "key": "Selected Food",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 48
+        }
+      },
+      {
+        "comment": "",
+        "key": "Protein Amount (grams)",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 65
+        }
+      },
+      {
+        "comment": "",
+        "key": "Default: %@g per 100g",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "g",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 74
+        }
+      },
+      {
+        "comment": "",
+        "key": "0",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 69
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Protein",
+        "location": {
+          "startingColumn": 42,
+          "startingLine": 88
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 109
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search foods",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 133
+        }
+      }
+    ]
+  },
+  "version": 1
+}

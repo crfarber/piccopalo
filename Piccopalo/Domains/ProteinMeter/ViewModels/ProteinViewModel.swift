@@ -2,17 +2,12 @@ import Foundation
 import Combine
 
 class ProteinViewModel: ObservableObject {
-    @Published var activityFactor: Double = 1.2
     @Published var proteinInput: String = ""
     @Published var todayRecord: DayRecord?
-    private let accountStorage = AccountStorage()
 
-    let activityOptions: [(label: String, factor: Double)] = [
-        ("Weinig beweging", 0.8),
-        ("Licht actief", 1.2),
-        ("Regelmatig sporten", 1.4),
-        ("Intensief trainen", 1.6)
-    ]
+    private let diaryRepository: DiaryRepositoryProtocol
+    private let userProfileRepository: UserProfileRepositoryProtocol
+    private var accountChangeCancellable: AnyCancellable?
 
     var proteinGoal: Double {
         accountWeight * activityFactor
@@ -37,49 +32,116 @@ class ProteinViewModel: ObservableObject {
         return formatter.string(from: Date())
     }
 
-    init() {
+    init(diaryRepository: DiaryRepositoryProtocol, userProfileRepository: UserProfileRepositoryProtocol) {
+        self.diaryRepository = diaryRepository
+        self.userProfileRepository = userProfileRepository
         loadToday()
+        accountChangeCancellable = NotificationCenter.default.publisher(for: .piccopaloAccountDidChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in self?.objectWillChange.send() }
     }
 
     var accountWeight: Double {
-        accountStorage.load()?.weight ?? 0
+        accountPayload?.weight ?? 0
+    }
+
+    var activityFactor: Double {
+        accountPayload?.activityFactor ?? 1.2
+    }
+
+    private var accountPayload: AccountData? {
+        userProfileRepository.loadAccount()
     }
 
     func loadToday() {
-        guard let record = StorageManager.shared.loadRecord(for: today) else { return }
-        todayRecord = record
-        activityFactor = record.activityFactor
+        todayRecord = diaryRepository.day(for: today)
+    }
+
+    /// Dagrecord voor een ISO-datum (geschiedenis / weekstrip).
+    func record(for dateISO: String) -> DayRecord? {
+        diaryRepository.day(for: dateISO)
+    }
+
+    /// Persisteert een volledig dagrecord (detailpagina).
+    func saveDayRecord(_ record: DayRecord) {
+        diaryRepository.save(record)
+        if record.date == today {
+            loadToday()
+        }
     }
 
     func addProtein() {
-        applyProteinDelta(Double(proteinInput) ?? 0)
+        let amount = Double(proteinInput) ?? 0
+        guard amount > 0 else { return }
+
+        let entry = ProteinEntry(
+            sourceName: "Handmatig",
+            quantity: amount,
+            unit: .grams,
+            proteinPer100: 100,
+            proteinAmount: amount
+        )
+        applyEntry(entry)
+        proteinInput = ""
+    }
+
+    func addProtein(source: ProteinSource, quantity: Double) {
+        guard quantity > 0 else { return }
+        let amount = (quantity / 100) * source.proteinPer100g
+        guard amount > 0 else { return }
+
+        let unit: ProteinEntryUnit = source.unit == .milliliters ? .milliliters : .grams
+        let entry = ProteinEntry(
+            sourceName: source.name,
+            quantity: quantity,
+            unit: unit,
+            proteinPer100: source.proteinPer100g,
+            proteinAmount: amount
+        )
+        applyEntry(entry)
     }
 
     func subtractProtein() {
         let amount = Double(proteinInput) ?? 0
         guard amount > 0 else { return }
-        applyProteinDelta(-amount)
+
+        let previous = currentDayRecord().proteinConsumed
+        let applied = min(amount, previous)
+        guard applied > 0 else { return }
+
+        let entry = ProteinEntry(
+            sourceName: "Correctie",
+            quantity: applied,
+            unit: .grams,
+            proteinPer100: 100,
+            proteinAmount: -applied
+        )
+        applyEntry(entry)
+        proteinInput = ""
     }
 
-    private func applyProteinDelta(_ delta: Double) {
-        guard delta != 0 else { return }
-
+    private func currentDayRecord() -> DayRecord {
         let weightValue = accountWeight
-        let goal = weightValue * activityFactor
-        let previous = todayRecord?.proteinConsumed ?? 0
-        let consumed = max(0, previous + delta)
-        guard consumed != previous else { return }
-
-        let record = DayRecord(
+        let existing = todayRecord ?? diaryRepository.day(for: today)
+        let factorForDay = existing?.activityFactor ?? activityFactor
+        let goal = weightValue * factorForDay
+        return DayRecord(
             date: today,
             weight: weightValue,
-            activityFactor: activityFactor,
+            activityFactor: factorForDay,
             proteinGoal: goal,
-            proteinConsumed: consumed
+            proteinConsumed: existing?.proteinConsumed ?? 0,
+            entries: existing?.entries ?? []
         )
+    }
+
+    private func applyEntry(_ entry: ProteinEntry) {
+        var record = currentDayRecord()
+        record.entries.insert(entry, at: 0)
+        record.proteinConsumed = max(0, record.proteinConsumed + entry.proteinAmount)
+
         todayRecord = record
-        StorageManager.shared.saveRecord(for: today, record: record)
-        proteinInput = ""
+        diaryRepository.save(record)
     }
 
     func message(for percentage: Double) -> String {
@@ -92,6 +154,6 @@ class ProteinViewModel: ObservableObject {
     }
 
     func allRecords() -> [DayRecord] {
-        StorageManager.shared.loadAllRecords()
+        diaryRepository.allDaysSorted()
     }
 }
