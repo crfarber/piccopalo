@@ -90,21 +90,6 @@
 			path = PiccopaloUITests;
 			sourceTree = "<group>";
 		};
-		5BDA98002FB39EB200E8A89A /* piccopalo-watch Watch App */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "piccopalo-watch Watch App";
-			sourceTree = "<group>";
-		};
-		5BDA980E2FB39EB300E8A89A /* piccopalo-watch Watch AppTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "piccopalo-watch Watch AppTests";
-			sourceTree = "<group>";
-		};
-		5BDA98182FB39EB300E8A89A /* piccopalo-watch Watch AppUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "piccopalo-watch Watch AppUITests";
-			sourceTree = "<group>";
-		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -161,9 +146,6 @@
 				5B9995C22FA60720007207CA /* Piccopalo */,
 				5B9995D52FA60720007207CA /* PiccopaloTests */,
 				5B9995DF2FA60720007207CA /* PiccopaloUITests */,
-				5BDA98002FB39EB200E8A89A /* piccopalo-watch Watch App */,
-				5BDA980E2FB39EB300E8A89A /* piccopalo-watch Watch AppTests */,
-				5BDA98182FB39EB300E8A89A /* piccopalo-watch Watch AppUITests */,
 				5BF33AF92FB089020099831F /* Frameworks */,
 				5B9995C12FA60720007207CA /* Products */,
 			);
@@ -294,9 +276,6 @@
 			);
 			dependencies = (
 			);
-			fileSystemSynchronizedGroups = (
-				5BDA98002FB39EB200E8A89A /* piccopalo-watch Watch App */,
-			);
 			name = "piccopalo-watch Watch App";
 			packageProductDependencies = (
 			);
@@ -317,9 +296,6 @@
 			dependencies = (
 				5BDA980D2FB39EB300E8A89A /* PBXTargetDependency */,
 			);
-			fileSystemSynchronizedGroups = (
-				5BDA980E2FB39EB300E8A89A /* piccopalo-watch Watch AppTests */,
-			);
 			name = "piccopalo-watch Watch AppTests";
 			packageProductDependencies = (
 			);
@@ -339,9 +315,6 @@
 			);
 			dependencies = (
 				5BDA98172FB39EB300E8A89A /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				5BDA98182FB39EB300E8A89A /* piccopalo-watch Watch AppUITests */,
 			);
 			name = "piccopalo-watch Watch AppUITests";
 			packageProductDependencies = (

@@ -5,25 +5,23 @@ struct ContentView: View {
 
     var body: some View {
         if authViewModel.isAuthenticated {
-            TabView {
-                HomeView()
-                    .tabItem {
-                        Label("Today", systemImage: "house.fill")
-                    }
+            NavigationStack {
+                TabView {
+                    HomeView()
+                        .tabItem {
+                            Label("Vandaag", systemImage: "house.fill")
+                        }
 
-                HistoryView()
-                    .tabItem {
-                        Label("History", systemImage: "calendar")
-                    }
-                AccountView()
-                    .tabItem {
-                        Label("Account", systemImage: "person.fill")
-                    }
+                    HistoryView()
+                        .tabItem {
+                            Label("Historie", systemImage: "calendar")
+                        }
+                }
+                .tint(.green)
+                .toolbarBackground(DesignTokens.Colors.background, for: .tabBar)
+                .toolbarBackground(.visible, for: .tabBar)
+                .toolbarColorScheme(.dark, for: .tabBar)
             }
-            .tint(.green)
-            .toolbarBackground(DesignTokens.Colors.background, for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
-            .toolbarColorScheme(.dark, for: .tabBar)
         } else {
             LoginView()
         }

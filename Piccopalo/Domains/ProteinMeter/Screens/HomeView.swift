@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @EnvironmentObject var viewModel: ProteinViewModel
+    @EnvironmentObject var accountViewModel: AccountViewModel
     @EnvironmentObject var healthManager: HealthManager
     @FocusState private var proteinInputFocused: Bool
     @State private var showProteinPicker = false
@@ -67,214 +68,376 @@ struct HomeView: View {
         activeScanSheet = nil
     }
 
+    // MARK: - Helpers
+
+    private var greeting: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        if hour < 12 { return "Goeie ochtend" }
+        if hour < 17 { return "Goeie middag" }
+        return "Goeie avond"
+    }
+
+    private var formattedDate: String {
+        let f = DateFormatter()
+        f.locale = Locale(identifier: "nl_NL")
+        f.dateFormat = "EEEE, d MMM"
+        return f.string(from: Date()).capitalized
+    }
+
+    private var statusText: String {
+        let pct = viewModel.percentage
+        if pct >= 100 { return "doel gehaald" }
+        if pct >= 75  { return "bijna daar" }
+        if pct >= 40  { return "op schema" }
+        return "begin vandaag"
+    }
+
+    private var userName: String {
+        accountViewModel.name.isEmpty ? "jou" : accountViewModel.name
+    }
+
+    private var userInitial: String {
+        String(userName.prefix(1)).uppercased()
+    }
+
+    private func formattedSteps(_ steps: Int) -> String {
+        guard steps >= 1000 else { return String(steps) }
+        return String(format: "%d.%03d", steps / 1000, steps % 1000)
+    }
+
+    // MARK: - Body
+
     var body: some View {
-        ZStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                        VStack(spacing: DesignTokens.Spacing.md) {
-                            StyledCard {
-                                VStack(spacing: DesignTokens.Spacing.md) {
-                                    Text("Mijn  protein")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(DesignTokens.Colors.text)
+        ScrollView {
+            VStack(spacing: DesignTokens.Spacing.lg) {
 
+                // ── Header ────────────────────────────────────────────
+                HStack(alignment: .top) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(formattedDate)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(DesignTokens.Colors.textMuted)
 
-                                    HStack(spacing: DesignTokens.Spacing.md) {
-                                        StatBox(
-                                            label: "Gegeten",
-                                            value: String(format: "%.0f", viewModel.proteinConsumed),
-                                            color: DesignTokens.Colors.green
-                                        )
-                                        StatBox(
-                                            label: "Doel",
-                                            value: String(format: "%.0f", viewModel.proteinGoal),
-                                            color: DesignTokens.Colors.text
-                                        )
-                                        StatBox(
-                                            label: "Te gaan",
-                                            value: String(format: "%.0f", viewModel.remaining),
-                                            color: DesignTokens.Colors.tomato
-                                        )
-                                    }
-                                    .padding(.horizontal, DesignTokens.Spacing.lg)
-                                    StyledProgressBar(percentage: viewModel.percentage)
-                                }
-                            }
-                            .padding(.horizontal, DesignTokens.Spacing.lg)
+                        (
+                            Text(greeting + ", ")
+                                .font(.system(size: 26, weight: .bold))
+                                .foregroundColor(DesignTokens.Colors.text)
+                            + Text(userName)
+                                .font(.custom(DesignTokens.Typography.displayFont, size: 26).italic())
+                                .foregroundColor(DesignTokens.Colors.text)
+                        )
+                    }
+                    Spacer()
+                    NavigationLink(destination: AccountView().environmentObject(accountViewModel)) {
+                        ZStack {
+                            Circle()
+                                .fill(DesignTokens.Colors.surface2)
+                                .frame(width: 42, height: 42)
+                            Text(userInitial)
+                                .font(.system(size: 17, weight: .semibold))
+                                .foregroundColor(DesignTokens.Colors.text)
                         }
-                        .padding(.bottom, DesignTokens.Spacing.md)
-
-                        Spacer()
-                            .frame(height: DesignTokens.Spacing.xxl)
-
-                        // Stappen section
-                        VStack(spacing: DesignTokens.Spacing.md) {
-                            StyledCard {
-                                VStack(spacing: DesignTokens.Spacing.md) {
-                                    Text("Mijn stappen")
-                                        .font(.system(size: 17, weight: .semibold))
-                                        .foregroundColor(DesignTokens.Colors.text)
-
-                                    HStack(spacing: DesignTokens.Spacing.md) {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text("\(Int(healthManager.steps))")
-                                                .font(.system(size: 28, weight: .semibold))
-                                                .foregroundColor(DesignTokens.Colors.green)
-
-                                            Text("van 10.000 stappen")
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(DesignTokens.Colors.textMuted)
-                                                .tracking(0.4)
-                                                .textCase(.uppercase)
-                                        }
-
-                                        Spacer()
-
-                                        VStack(alignment: .trailing, spacing: 4) {
-                                            Text(String(format: "%.0f%%", (Double(healthManager.steps) / 10000) * 100))
-                                                .font(.system(size: 24, weight: .semibold))
-                                                .foregroundColor(DesignTokens.Colors.green)
-
-                                            if healthManager.isAuthorized {
-                                                Text("✓ Gekoppeld")
-                                                    .font(.system(size: 11, weight: .semibold))
-                                                    .foregroundColor(DesignTokens.Colors.green)
-                                            } else {
-                                                Text("Niet gekoppeld")
-                                                    .font(.system(size: 11, weight: .semibold))
-                                                    .foregroundColor(DesignTokens.Colors.tomato)
-                                            }
-                                        }
-                                    }
-                                    
-                                    StyledProgressBar(percentage: (Double(healthManager.steps) / 10000) * 100)
-
-                                }
-                            }
-                            .padding(.horizontal, DesignTokens.Spacing.lg)
-                        }
-                        .padding(.bottom, DesignTokens.Spacing.xxl)
-
-                        Spacer()
-                            .frame(height: DesignTokens.Spacing.xxl)
-
-                        VStack(spacing: DesignTokens.Spacing.md) {
-                            StyledCard {
-                                VStack(spacing: DesignTokens.Spacing.md) {
-                                    HStack(alignment: .bottom, spacing: DesignTokens.Spacing.sm) {
-                                        TextInput(label: "Noteer eiwit", text: $viewModel.proteinInput, placeholder: "Hoeveel gram?", unit: "", keyboard: .decimal, fieldFocus: $proteinInputFocused)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .onChange(of: viewModel.proteinInput) {
-                                                let filtered = viewModel.proteinInput.filter { "0123456789.".contains($0) }
-                                                if filtered.filter({ $0 == "." }).count > 1 {
-                                                    let first = filtered.prefix { $0 != "." } + filtered.drop { $0 != "." }.prefix(while: { $0 == "." }) + filtered.drop { $0 != "." }.drop(while: { $0 == "." }).filter { $0 != "." }
-                                                    viewModel.proteinInput = String(first)
-                                                } else {
-                                                    viewModel.proteinInput = filtered
-                                                }
-                                            }
-
-                                        Button(action: { viewModel.addProtein() }, label: { Text("+") })
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(DesignTokens.Colors.text)
-                                            .frame(width: 44)
-                                            .padding(.vertical, DesignTokens.Spacing.sm)
-                                            .background(DesignTokens.Colors.green)
-                                            .cornerRadius(DesignTokens.Radius.md)
-                                    }
-
-                                    Button(action: { showProteinPicker = true }) {
-                                        HStack(spacing: DesignTokens.Spacing.sm) {
-                                            Image(systemName: "list.bullet")
-                                            Text("Choose food")
-                                                .fontWeight(.semibold)
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .padding(DesignTokens.Spacing.md)
-                                        .background(DesignTokens.Colors.surface2)
-                                        .foregroundColor(DesignTokens.Colors.green)
-                                        .cornerRadius(DesignTokens.Radius.md)
-                                    }
-
-                                    Button(action: { startScanFlow() }) {
-                                        HStack(spacing: DesignTokens.Spacing.sm) {
-                                            Image(systemName: "barcode.viewfinder")
-                                            Text("Scan")
-                                                .fontWeight(.semibold)
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                        .padding(DesignTokens.Spacing.md)
-                                        .background(DesignTokens.Colors.surface2)
-                                        .foregroundColor(DesignTokens.Colors.green)
-                                        .cornerRadius(DesignTokens.Radius.md)
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, DesignTokens.Spacing.lg)
-                        }
-                        .padding(.bottom, DesignTokens.Spacing.xxl)
-
-
+                    }
                 }
-            }
-            .scrollContentBackground(.hidden) // iOS 16+
-            .background(DesignTokens.Colors.background)
-            .scrollDismissesKeyboard(.immediately)
-            .onAppear {
-                Task {
-                    await healthManager.fetchTodayData()
-                }
-            }
-            .onTapGesture {
-                proteinInputFocused = false
-            }
-            .sheet(isPresented: $showProteinPicker) {
-                ProteinSourcePickerView(viewModel: viewModel)
-            }
-            .sheet(item: $activeScanSheet) { sheet in
-                switch sheet.kind {
-                case .scanner:
-                    BarcodeScannerView(
-                        onScan: { code in
-                            handleScannedBarcode(code)
-                        },
-                        onCancel: {
-                            activeScanSheet = nil
-                        },
-                        onFailure: { message in
-                            activeScanSheet = ScanSheetState(
-                                kind: .error(message: message, allowsManualEntry: true)
+                .padding(.top, DesignTokens.Spacing.sm)
+
+                // ── Protein ring card ─────────────────────────────────
+                StyledCard {
+                    VStack(spacing: DesignTokens.Spacing.lg) {
+
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("EIWIT · VANDAAG")
+                                    .font(.system(size: 11, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .tracking(0.7)
+                                Text("Mijn protein")
+                                    .font(.custom(DesignTokens.Typography.displayFont, size: 20).italic())
+                                    .foregroundColor(DesignTokens.Colors.text)
+                            }
+                            Spacer()
+                            Text(String(format: "%.0f%%", viewModel.percentage) + " · " + statusText)
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(DesignTokens.Colors.green)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(DesignTokens.Colors.green.opacity(0.14))
+                                .clipShape(Capsule())
+                        }
+
+                        RingProgressView(
+                            consumed: viewModel.proteinConsumed,
+                            goal: viewModel.proteinGoal
+                        )
+                        .frame(height: 210)
+
+                        HStack(spacing: 0) {
+                            HomeStatColumn(
+                                value: String(format: "%.0fg", viewModel.proteinConsumed),
+                                label: "GEGETEN",
+                                color: DesignTokens.Colors.green
+                            )
+                            Rectangle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 1, height: 36)
+                            HomeStatColumn(
+                                value: String(format: "%.0fg", viewModel.proteinGoal),
+                                label: "DOEL",
+                                color: DesignTokens.Colors.text
+                            )
+                            Rectangle()
+                                .fill(Color.white.opacity(0.1))
+                                .frame(width: 1, height: 36)
+                            HomeStatColumn(
+                                value: String(format: "%.0fg", viewModel.remaining),
+                                label: "TE GAAN",
+                                color: DesignTokens.Colors.tomato
                             )
                         }
-                    )
-                case .loading:
-                    ScanLoadingView(onCancel: {
-                        activeScanSheet = nil
-                    })
-                case let .result(product):
-                    ScanResultView(
-                        product: product,
-                        onConfirm: { quantity in
-                            applyScannedProduct(product, quantity: quantity)
-                        },
-                        onCancel: {
-                            activeScanSheet = nil
-                        }
-                    )
-                case let .error(message, allowsManualEntry):
-                    ScanErrorView(
-                        message: message,
-                        allowsManualEntry: allowsManualEntry,
-                        onRetry: { startScanFlow() },
-                        onManualEntry: {
-                            activeScanSheet = nil
-                            proteinInputFocused = true
-                        },
-                        onCancel: { activeScanSheet = nil }
-                    )
+                    }
                 }
+
+                // ── Steps card ────────────────────────────────────────
+                StyledCard {
+                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+
+                        HStack(spacing: DesignTokens.Spacing.sm) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(DesignTokens.Colors.surface2)
+                                    .frame(width: 34, height: 34)
+                                Image(systemName: "figure.walk")
+                                    .font(.system(size: 15))
+                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                            }
+                            VStack(alignment: .leading, spacing: 0) {
+                                Text("BEWEGING")
+                                    .font(.system(size: 10, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .tracking(0.7)
+                                Text("Mijn stappen")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.text)
+                            }
+                            Spacer()
+                            Text(healthManager.isAuthorized ? "✓ Gekoppeld" : "Niet gekoppeld")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(healthManager.isAuthorized
+                                    ? DesignTokens.Colors.green
+                                    : DesignTokens.Colors.tomato)
+                        }
+
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                            Text(formattedSteps(healthManager.steps))
+                                .font(.system(size: 40, weight: .bold))
+                                .foregroundColor(DesignTokens.Colors.green)
+                                .monospacedDigit()
+                            Text("van 10.000")
+                                .font(.system(size: 14))
+                                .foregroundColor(DesignTokens.Colors.textMuted)
+                            Spacer()
+                            Text(String(format: "%.0f%%", min((Double(healthManager.steps) / 10000) * 100, 100)))
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(DesignTokens.Colors.text)
+                                .monospacedDigit()
+                        }
+
+                        StepDotBar(steps: Int(healthManager.steps), goal: 10000)
+                    }
+                }
+
+                // ── Log card ──────────────────────────────────────────
+                StyledCard {
+                    VStack(spacing: DesignTokens.Spacing.md) {
+
+                        HStack {
+                            HStack(spacing: DesignTokens.Spacing.sm) {
+                                Image(systemName: "circle")
+                                    .font(.system(size: 18))
+                                    .foregroundColor(DesignTokens.Colors.green)
+                                Text("Noteer eiwit")
+                                    .font(.system(size: 17, weight: .semibold))
+                                    .foregroundColor(DesignTokens.Colors.text)
+                            }
+                            Spacer()
+                            Text("SNEL")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .tracking(0.7)
+                        }
+
+                        // Input row
+                        HStack(spacing: DesignTokens.Spacing.sm) {
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                                    .fill(DesignTokens.Colors.surface2)
+
+                                HStack(alignment: .firstTextBaseline, spacing: 5) {
+                                    if viewModel.proteinInput.isEmpty {
+                                        Text("gram")
+                                            .font(.system(size: 22, weight: .light))
+                                            .foregroundColor(DesignTokens.Colors.textDim)
+                                    } else {
+                                        Text(viewModel.proteinInput)
+                                            .font(.system(size: 22, weight: .semibold, design: .monospaced))
+                                            .foregroundColor(DesignTokens.Colors.text)
+                                        Text("gram")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(DesignTokens.Colors.textMuted)
+                                    }
+                                    Spacer()
+                                }
+                                .padding(.horizontal, DesignTokens.Spacing.lg)
+                                .allowsHitTesting(false)
+
+                                TextField("", text: $viewModel.proteinInput)
+                                    .keyboardType(.decimalPad)
+                                    .focused($proteinInputFocused)
+                                    .opacity(0.01)
+                                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                            }
+                            .frame(height: 58)
+                            .onChange(of: viewModel.proteinInput) {
+                                let filtered = viewModel.proteinInput.filter { "0123456789.".contains($0) }
+                                if filtered.filter({ $0 == "." }).count > 1 {
+                                    viewModel.proteinInput = String(filtered.prefix(while: { $0 != "." }))
+                                        + "."
+                                        + filtered.drop(while: { $0 != "." }).dropFirst().filter({ $0 != "." })
+                                } else {
+                                    viewModel.proteinInput = filtered
+                                }
+                            }
+                            .onTapGesture { proteinInputFocused = true }
+
+                            Button(action: { viewModel.addProtein() }) {
+                                Image(systemName: "plus")
+                                    .font(.system(size: 22, weight: .bold))
+                                    .foregroundColor(DesignTokens.Colors.background)
+                                    .frame(width: 58, height: 58)
+                                    .background(DesignTokens.Colors.green)
+                                    .cornerRadius(DesignTokens.Radius.md)
+                            }
+                        }
+
+                        // Quick chips
+                        HStack(spacing: DesignTokens.Spacing.sm) {
+                            ForEach([10, 20, 30, 50], id: \.self) { amount in
+                                Button {
+                                    viewModel.proteinInput = String(amount)
+                                    viewModel.addProtein()
+                                } label: {
+                                    Text("+\(amount)g")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundColor(DesignTokens.Colors.green)
+                                        .padding(.horizontal, DesignTokens.Spacing.md)
+                                        .padding(.vertical, DesignTokens.Spacing.sm)
+                                        .background(DesignTokens.Colors.green.opacity(0.12))
+                                        .clipShape(Capsule())
+                                }
+                            }
+                            Spacer()
+                        }
+
+                        // Action buttons
+                        HStack(spacing: DesignTokens.Spacing.sm) {
+                            Button(action: { showProteinPicker = true }) {
+                                HStack(spacing: DesignTokens.Spacing.sm) {
+                                    Image(systemName: "list.bullet")
+                                    Text("Kies voedsel")
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(DesignTokens.Spacing.md)
+                                .background(DesignTokens.Colors.surface2)
+                                .foregroundColor(DesignTokens.Colors.text)
+                                .cornerRadius(DesignTokens.Radius.md)
+                            }
+
+                            Button(action: { startScanFlow() }) {
+                                HStack(spacing: DesignTokens.Spacing.sm) {
+                                    Image(systemName: "barcode.viewfinder")
+                                    Text("Scan")
+                                        .fontWeight(.semibold)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(DesignTokens.Spacing.md)
+                                .background(DesignTokens.Colors.surface2)
+                                .foregroundColor(DesignTokens.Colors.text)
+                                .cornerRadius(DesignTokens.Radius.md)
+                            }
+                        }
+                    }
+                }
+
+                Spacer(minLength: DesignTokens.Spacing.xxl)
+            }
+            .padding(.horizontal, DesignTokens.Spacing.lg)
+        }
+        .scrollContentBackground(.hidden)
+        .background(DesignTokens.Colors.background)
+        .scrollDismissesKeyboard(.immediately)
+        .onAppear {
+            Task { await healthManager.fetchTodayData() }
+        }
+        .onTapGesture { proteinInputFocused = false }
+        .sheet(isPresented: $showProteinPicker) {
+            ProteinSourcePickerView(viewModel: viewModel)
+        }
+        .sheet(item: $activeScanSheet) { sheet in
+            switch sheet.kind {
+            case .scanner:
+                BarcodeScannerView(
+                    onScan: { code in handleScannedBarcode(code) },
+                    onCancel: { activeScanSheet = nil },
+                    onFailure: { message in
+                        activeScanSheet = ScanSheetState(
+                            kind: .error(message: message, allowsManualEntry: true)
+                        )
+                    }
+                )
+            case .loading:
+                ScanLoadingView(onCancel: { activeScanSheet = nil })
+            case let .result(product):
+                ScanResultView(
+                    product: product,
+                    onConfirm: { quantity in applyScannedProduct(product, quantity: quantity) },
+                    onCancel: { activeScanSheet = nil }
+                )
+            case let .error(message, allowsManualEntry):
+                ScanErrorView(
+                    message: message,
+                    allowsManualEntry: allowsManualEntry,
+                    onRetry: { startScanFlow() },
+                    onManualEntry: {
+                        activeScanSheet = nil
+                        proteinInputFocused = true
+                    },
+                    onCancel: { activeScanSheet = nil }
+                )
             }
         }
+    }
+}
+
+// MARK: - Private sub-views
+
+private struct HomeStatColumn: View {
+    let value: String
+    let label: String
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(color)
+                .monospacedDigit()
+            Text(label)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundColor(DesignTokens.Colors.textMuted)
+                .tracking(0.5)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -361,28 +524,6 @@ private struct ScanLoadingView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .navigationViewStyle(.stack)
-    }
-}
-
-struct StatBox: View {
-    let label: String
-    let value: String
-    let color: Color
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(value + "g")
-                .font(.system(size: 28, weight: .semibold))
-                .foregroundColor(color)
-                .monospacedDigit()
-
-            Text(label)
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(DesignTokens.Colors.textMuted)
-                .tracking(0.4)
-                .textCase(.uppercase)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
