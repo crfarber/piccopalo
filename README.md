@@ -1,143 +1,121 @@
-# Piccopalo — design brief (iOS)
+# Piccopalo v0.2 (iOS)
 
-Korte referentie voor design: wat de app doet, welke schermen er zijn, welke inhoud en interacties designers kunnen uitwerken.
+Piccopalo is een iOS app voor dagelijkse eiwittracking met automatische activiteitsinschatting op basis van HealthKit, barcode-scanning voor producten en cloud-opslag via Supabase.
 
-## Product in één zin
+## Wat is nieuw in deze versie
 
-**Piccopalo helpt je je dagelijkse eiwitdoel te halen**: je ziet hoeveel eiwit je vandaag al binnen hebt, hoe ver je van je doel bent, en je kunt meerdere keren per dag grammetjes toevoegen (of corrigeren).
+De app is uitgebreid van lokale eiwittracker naar een account-gebonden app met cloud data en health-integratie.
 
-## Navigatie (tab bar)
+Nieuwe of sterk uitgebreide onderdelen:
+- Authenticatie (inloggen, registreren, uitloggen) met Supabase Auth.
+- Cloud persistence via Supabase tabellen voor profiel, dagtotalen en individuele entries.
+- Barcode scanner (EAN13/UPC) met productlookup via Open Food Facts.
+- HealthKit-koppeling (stappen, actieve energie, oefentijd, afstand, trappen).
+- Dynamische activiteitsfactor uit 7-daags model (week 70%, vandaag 30%).
+- Lokale notificaties en background checks voor stappen-doelen (13:00 reminder + drempels).
+- Verbeterde history/dagdetail met lijst van losse innames en verwijderen van entries.
 
-Drie tabs, accentkleur in de app is **groen** (`TabView` met `.tint(.green)`).
+## Belangrijkste features
 
-| Tab | Doel |
-|-----|------|
-| **Today** (`HomeView`) | Startscherm: eiwit invoeren, voortgang vandaag |
-| **History** (`HistoryView`) | Lijst met eerdere dagen + detail per dag |
-| **Account** (`AccountView`) | Profielgegevens die het doel beïnvloeden (o.a. gewicht) |
+## 1) Login en account
+- E-mail/wachtwoord login en signup.
+- Tabbar is alleen zichtbaar voor ingelogde gebruikers.
+- Account bevat naam, gewicht, lengte en activiteitsniveau.
+- Uitloggen vanuit accountscherm.
 
-Tab-labels in code: *Today*, *History*, *Account* (Engels); History-schermtitel in de navigatie: **Geschiedenis**.
+## 2) Protein tracking (Today)
+- Handmatig eiwit toevoegen.
+- Eiwit toevoegen via vaste voedingslijst met berekening op hoeveelheid.
+- Eiwit toevoegen via barcode scan en automatische productdata.
+- Live statistieken: gegeten, doel, nog te gaan, percentage.
 
-## Rekenregels (belangrijk voor copy en uitleg)
+Rekenregels:
+- Dagdoel (g) = gewicht (kg) x activiteitsfactor.
+- Percentage = min((gegeten / doel) x 100, 100).
+- Nog te gaan = max(doel - gegeten, 0).
 
-- **Dagdoel eiwit (gram)** = `gewicht (kg) × activiteitsfactor`
-  - Gewicht komt uit **Account** (lokaal opgeslagen profiel).
-  - **Activiteitsfactor** zit in de app-logica (zie `ProteinViewModel`): o.a. 0.8 / 1.2 / 1.4 / 1.6 met bijbehorende Nederlandse labels (*Weinig beweging*, *Licht actief*, …).
-  - In de **huidige UI** staat de activiteitskiezer **niet** op Today; de factor wordt wel uit een opgeslagen dagrecord geladen of valt terug op de standaard (1.2). Voor design: bepaal of activiteit op **Today**, **Account** of **onboarding** hoort — en hoe je dat uitlegt aan de gebruiker.
-- **Gegeten eiwit vandaag** = optelling van alle toevoegingen (en aftrekken bij correctie), per kalenderdag.
-- **Percentage richting doel** = `min(gegeten / doel × 100, 100)` (cap op 100% in de weergave).
-- **Nog te gaan** = `max(doel − gegeten, 0)`.
+## 3) Barcode + Open Food Facts
+- Camera scanner ondersteunt EAN13 en UPC.
+- Product lookup via Open Food Facts API.
+- Portie invoeren en automatisch eiwit berekenen.
+- Heldere foutafhandeling (niet gevonden, geen eiwitdata, timeout, netwerk).
+- Fallback naar handmatige invoer wanneer nodig.
 
-## Today — startscherm (`HomeView`)
+## 4) History en dagdetail
+- Overzicht van eerdere dagen, gesorteerd op datum.
+- 7-daagse strip met voortgang per dag.
+- Dagdetail toont resultaat, doel, activiteit en innames.
+- Handmatige correctie per dag.
+- Losse innames verwijderen met automatische herberekening van totaal.
 
-**Doel van het scherm:** snel eiwit loggen en direct feedback zien.
+## 5) HealthKit en activiteit
+- Leest vandaag en weekgemiddelde voor:
+  - stappen
+  - actieve energie
+  - oefentijd
+  - afstand
+  - verdiepingen
+- Berekent activiteitsfactor (0.8 / 1.2 / 1.4 / 1.6) uit gecombineerde activiteitsscore.
+- Health details-scherm toont advies en laat gebruiker factor overnemen in account.
+- Background observers verversen healthdata bij updates.
 
-### Header
+## 6) Notificaties
+- Dagelijkse herinnering rond 13:00 op basis van stapvoortgang.
+- Drempelnotificaties op 80%, 95% en 100% van stappendoel.
+- Background task scheduling voor periodieke step checks.
 
-- Emoji **🍝** (placeholder voor een eigen app-icoon/illustratie).
-- Titel: **Piccopalo**
-- Subtitel: **Jouw dagelijkse eiwittracker**
-- Titel nu in **groen**, subtitel secundaire tekstkleur.
+## Architectuur
 
-### Sectie “Eiwit”
+- UI: SwiftUI.
+- State: ObservableObject viewmodels met environment objects.
+- Auth + backend: Supabase.
+- Device data: HealthKit, UserNotifications, BackgroundTasks, AVFoundation.
 
-- **Label:** “Eiwit” met SF Symbol `dumbbell.fill` (kan vervangen worden door eigen asset / zonder icoon).
-- **Invoer:** tekstveld **Gram** (decimaaltoetsenbord).
-- **Acties:**
-  - **+** (groen): telt ingevoerde gram bij het totaal van vandaag.
-  - **−** (oranje): trekt ingevoerde gram af (correctie; totaal gaat niet onder 0).
-- **Overlay rechtsboven:** knop met label **Eiwit** + icoon `carrot.fill` (opent voedselkiezer — zie modaal hieronder).
+Belangrijke componenten:
+- App root en dependency wiring in Piccopalo/PiccopaloApp.swift.
+- Auth flow in Piccopalo/Auth/.
+- Protein domain in Piccopalo/Domains/ProteinMeter/.
+- History domain in Piccopalo/Domains/Diary/.
+- Account domain in Piccopalo/Domains/Account/.
+- Health integratie in Piccopalo/Health/.
+- Externe services in Piccopalo/Services/.
 
-### Sectie “Vandaag”
+## Data en opslag
 
-- Label met `chart.bar.fill`.
-- Rijen (key–value):
-  - **Dagdoel** — `Xg`
-  - **Gegeten** — `Xg` (groen)
-  - **Nog te gaan** — `Xg` (oranje)
-  - **Percentage** — `X%`
-- **Voortgangsbalk** (`ProgressBarView`): achtergrond licht grijs; vulling **geel / oranje / groen** afhankelijk van percentage (<50 / 50–90 / ≥90).
-- **Motivatiezin** onder de balk (afhankelijk van percentage), o.a. met emoji’s — kan herschreven worden voor tone-of-voice.
+Supabase repositories:
+- SupabaseUserProfileRepository: profieldata.
+- SupabaseDiaryRepository: dagrecords en entries.
 
-## Modaal: voedselkiezer (`ProteinSourcePickerView`)
+Dagrecord bevat onder andere:
+- date
+- weight
+- activityFactor
+- proteinGoal
+- proteinConsumed
+- entries[]
 
-**Doel:** eiwit toevoegen via een lijst met voedingsmiddelen en eiwit per 100g.
+## Productstatus
 
-- **Zoekbalk** bovenaan.
-- **Lijst:** naam links, `Xg` rechts (eiwit per 100g).
-- **Detailstap na selectie:**
-  - Titel *Selected Food*, naam van product, sluitknop (`xmark.circle.fill`).
-  - Invoer *Protein Amount (grams)* + hint *Default: … g per 100g*.
-  - Actie om toe te voegen en sheet te sluiten (flow sluit af met `dismiss`).
+Geimplementeerd:
+- Auth gate + accountbeheer.
+- Cloud-synchronisatie van profiel en dagdata.
+- Handmatig loggen, voedingslijst en barcodeflow.
+- History met detail en correcties.
+- HealthKit metrics en activiteitssuggestie.
+- Notificaties en background monitoring voor stappen.
 
-Design kan dit hernoemen naar Nederlands en de “per 100g”-uitleg visueel duidelijker maken (bijvoorbeeld rekenhulp of portie-slider).
+In code aanwezig maar nog niet in hoofdflow:
+- Onboarding views onder Piccopalo/Domains/Account/Onboarding/.
 
-## History — geschiedenis (`HistoryView`)
+## Vereisten
 
-**Lege staat**
+- iOS project met SwiftUI.
+- Health permissies voor gezondheidsfeatures.
+- Camera permissie voor barcode scanner.
+- Internetverbinding voor Open Food Facts en Supabase.
 
-- Emoji **📅**
-- **Nog geen data**
-- Subtekst: *Voeg vandaag je eerste eiwitinname toe!*
+## Documentatie
 
-**Met data**
-
-- Inset grouped **list** van dagen (datum als `yyyy-MM-dd` in data — design kan dit formatteren naar locale-vriendelijke datum).
-- Elke rij toont:
-  - Datum (headline)
-  - Regel: **Doel: Xg** | **Gegeten: Xg**
-  - Voortgangsbalk (lage hoogte, ca. 10pt)
-  - **X%** als caption
-
-Tap → **Dagdetail** (`DayDetailView`).
-
-## Dagdetail (`DayDetailView`)
-
-**Doel:** inzicht in één dag + **handmatige correctie** van gegeten eiwit.
-
-1. **Gegevens** (`person.fill`)
-   - Gewicht (kg) — snapshot opgeslagen bij die dag
-   - Activiteit — tekst afgeleid van factor
-2. **Resultaten** (`chart.bar.fill`)
-   - Eiwitdoel, gegeten, percentage + voortgangsbalk
-3. **Handmatig aanpassen** (`square.and.pencil`)
-   - Veld *Gegeten gram* + knop **Opslaan**
-   - Uitleg: *Pas alleen deze dag aan. Je kunt fouten achteraf corrigeren.*
-
-Design: overweeg bevestiging, undo, of “reset naar 0” als secundaire actie.
-
-## Account (`AccountView`)
-
-**Doel:** gegevens die het eiwitdoel sturen (nu vooral gewicht).
-
-- Sectie **Jouw gegevens** (`person.fill`)
-  - **Gewicht (kg)** — numeriek veld; wijzigingen worden opgeslagen (bij wijziging gewicht).
-
-`AccountViewModel` heeft in code ook `name` en `length`; die staan **nog niet** in de UI — ruimte voor design om profiel uit te breiden.
-
-## Onboarding (optioneel / in aanbouw)
-
-Onder `Domains/Account/Onboarding/` staan onder andere `NameView`, `LengteView`, `WeightView`, `OnboardingView` — nog niet geïntegreerd in de hoofd-tabflow. Design kan hier een eerste-run flow voor voorstellen.
-
-## Visuele richting (huidige implementatie)
-
-- **Primaire accent:** groen (titels, tab tint, sommige knoppen).
-- **Secundair:** oranje (correctie), blauw (opslaan in detail), systeemgrijs voor achtergronden van kaarten/knoppen.
-- Veel gebruik van **SF Symbols** en **emoji** als tijdelijke branding — vervangbaar door illustraties en eigen iconenset.
-
-## Wat de designer concreet kan opleveren
-
-1. **Brand kit:** logo, kleuren, typografie (Dynamic Type), dark mode.
-2. **Componenten:** tab bar, group cards, primary/secondary/destructive buttons, invoervelden (inclusief decimal pad), voortgangsbalk states (0–100%, >100% als je ooit uncappen wilt).
-3. **Copy deck** NL/EN voor alle labels, lege staten en foutmeldingen (onder andere gewicht 0 → doel 0; uitleg activiteit).
-4. **Flows op papier/Figma:** Today (handmatig + uit lijst), History → Detail → handmatige edit, Account.
-5. **Datumweergave:** gebruikersvriendelijke datum in plaats van raw `yyyy-MM-dd` in lijst en detail.
-
-## Technische context (voor afstemming)
-
-- Platform: **SwiftUI**, iOS-app in map `Piccopalo/`.
-- Data: **** (lokaal) met repositories; eenmalige migratie van oude UserDefaults-keys (`piccopalo_records`, `piccopalo_account`). Optioneel legacy **`account`** via `AccountStorage` bij eerste load.
-
----
-
-*Dit document beschrijft de app zoals die in de codebase staat; waar de UI en de logica nog niet volledig synchroon zijn (zoals activiteit op Today), is dat bewust vermeld zodat design en development hetzelfde verwachtingspatroon kunnen afspreken.*
+- Overzicht functionaliteit: docs/app-functionality.md
+- User stories: docs/user-stories.md
+- Datamodel: docs/db/

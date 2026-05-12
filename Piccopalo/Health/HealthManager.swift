@@ -19,6 +19,8 @@ class HealthManager: NSObject, ObservableObject {
     @Published var lastUpdated: Date? = nil
     
     private let healthStore = HKHealthStore()
+    private var observerQueries: [HKObserverQuery] = []
+    private var hasConfiguredObservers = false
     private var readTypes: Set<HKObjectType> {
         [
             HKQuantityType(.stepCount),
@@ -49,8 +51,30 @@ class HealthManager: NSObject, ObservableObject {
             isAuthorized = true
             refreshAuthorizationStatus()
             await fetchTodayData()
+            startBackgroundStepMonitoringIfAuthorized()
         } catch {
             errorMessage = "Authorization request failed: \(error.localizedDescription)"
+        }
+    }
+
+    /// Starts HealthKit observers/background delivery if permission is already granted.
+    /// Call this at app launch so monitoring works without visiting HealthView first.
+    func startBackgroundStepMonitoringIfAuthorized() {
+        guard HKHealthStore.isHealthDataAvailable() else { return }
+        guard let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+
+        let status = healthStore.authorizationStatus(for: stepType)
+        guard status == .sharingAuthorized else { return }
+
+        isAuthorized = true
+
+        if !hasConfiguredObservers {
+            setupHealthKitObservers()
+            hasConfiguredObservers = true
+        }
+
+        Task {
+            await fetchTodayData()
         }
     }
 
@@ -307,5 +331,46 @@ class HealthManager: NSObject, ObservableObject {
             )
             completion(stepsResult.value)
         }
+    }
+    
+    /// Setup real-time observers for HealthKit data changes
+    /// Automatically refetches data when Health app updates
+    private func setupHealthKitObservers() {
+        // Observer voor stappen
+        guard let stepType = HKObjectType.quantityType(forIdentifier: .stepCount) else { return }
+
+        healthStore.enableBackgroundDelivery(for: stepType, frequency: .immediate) { success, error in
+            if let error {
+                print("Enable background delivery failed: \(error.localizedDescription)")
+            } else if !success {
+                print("Enable background delivery returned false for steps")
+            }
+        }
+        
+        let stepsObserver = HKObserverQuery(sampleType: stepType, predicate: nil) { [weak self] _, completionHandler, error in
+            if let error = error {
+                print("Steps observer error: \(error.localizedDescription)")
+                completionHandler()
+                return
+            }
+            
+            // Refetch data wanneer stappen update
+            Task { @MainActor in
+                await self?.fetchTodayData()
+
+                // Trigger notification check voor drempels
+                if let self = self {
+                    self.getTodaySteps { steps in
+                        Task { @MainActor in
+                            NotificationService.shared.checkThresholdNotifications(stepsCount: Int(steps), stepsGoal: 10000)
+                        }
+                    }
+                }
+                completionHandler()
+            }
+        }
+        
+        healthStore.execute(stepsObserver)
+        observerQueries.append(stepsObserver)
     }
 }

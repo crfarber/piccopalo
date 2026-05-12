@@ -9,9 +9,10 @@ class NotificationService: NSObject {
     static let shared = NotificationService()
     
     private let healthStore = HKHealthStore()
-    private var stepsGoal: Int = 8000
+    private var stepsGoal: Int = 10000
     private let userDefaults = UserDefaults.standard
     private let bgTaskIdentifier = "com.piccopalo.stepcheck"
+    private var isBackgroundTaskRegistered = false
     
     // Keys for UserDefaults threshold tracking
     private let thresholdKeyPrefix = "piccopalo_thresholds_"
@@ -55,12 +56,25 @@ class NotificationService: NSObject {
     /// Setup background step monitoring
     func setupBackgroundStepMonitoring() {
         // Register background task handler
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: bgTaskIdentifier, using: nil) { [weak self] task in
-            self?.handleBackgroundStepCheck(task: task as! BGAppRefreshTask)
+        if !isBackgroundTaskRegistered {
+            BGTaskScheduler.shared.register(forTaskWithIdentifier: bgTaskIdentifier, using: nil) { [weak self] task in
+                self?.handleBackgroundStepCheck(task: task as! BGAppRefreshTask)
+            }
+            isBackgroundTaskRegistered = true
         }
         
         // Schedule first background task
         scheduleNextBackgroundRefresh()
+    }
+
+    /// Re-schedules periodic background step checks when app goes to background.
+    func scheduleBackgroundRefreshNow() {
+        scheduleNextBackgroundRefresh()
+    }
+    
+    /// Check and fire threshold notifications (can be called from HealthManager on real-time updates)
+    func checkThresholdNotifications(stepsCount: Int, stepsGoal: Int) {
+        checkAndFireThresholdNotifications(stepsCount: stepsCount, stepsGoal: stepsGoal)
     }
     
     // MARK: - Private Helpers
@@ -120,7 +134,7 @@ class NotificationService: NSObject {
                 }
                 
                 let steps = result?.sumQuantity()?.doubleValue(for: HKUnit.count()) ?? 0
-                self?.checkAndFireThresholdNotifications(stepsCount: Int(steps))
+                self?.checkAndFireThresholdNotifications(stepsCount: Int(steps), stepsGoal: self?.stepsGoal ?? 10000)
                 task.setTaskCompleted(success: true)
             }
         }
@@ -130,7 +144,7 @@ class NotificationService: NSObject {
         scheduleNextBackgroundRefresh()
     }
     
-    private func checkAndFireThresholdNotifications(stepsCount: Int) {
+    private func checkAndFireThresholdNotifications(stepsCount: Int, stepsGoal: Int) {
         let thresholds = [80, 95, 100]
         let percentage = Double(stepsCount) / Double(stepsGoal) * 100
         
@@ -210,6 +224,8 @@ class NotificationService: NSObject {
     }
     
     private func sendNotification(title: String, body: String, badge: NSNumber) {
+        NotificationStore.shared.add(title: title, body: body)
+
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
@@ -227,7 +243,7 @@ class NotificationService: NSObject {
     private func loadStepsGoal() {
         stepsGoal = userDefaults.integer(forKey: stepsGoalKey)
         if stepsGoal == 0 {
-            stepsGoal = 8000
+            stepsGoal = 10000
         }
     }
 }

@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct PiccopaloApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var proteinViewModel = ProteinViewModel(
         diaryRepository: SupabaseDiaryRepository(),
         userProfileRepository: SupabaseUserProfileRepository()
@@ -23,6 +24,19 @@ struct PiccopaloApp: App {
                 .environmentObject(healthManager)
                 .onAppear {
                     initializeNotifications()
+                    healthManager.startBackgroundStepMonitoringIfAuthorized()
+                }
+                .onChange(of: scenePhase) { _, newPhase in
+                    if newPhase == .background {
+                        NotificationService.shared.scheduleBackgroundRefreshNow()
+                    }
+                }
+                .onChange(of: healthManager.lastUpdated) { _, _ in
+                    let newFactor = healthManager.calculateActivityFactor()
+                    if accountViewModel.activityFactor != newFactor {
+                        accountViewModel.activityFactor = newFactor
+                        accountViewModel.saveAccount()
+                    }
                 }
         }
     }
@@ -31,8 +45,22 @@ struct PiccopaloApp: App {
         NotificationService.shared.requestPermissions { granted in
             if granted {
                 NotificationService.shared.setupBackgroundStepMonitoring()
-                NotificationService.shared.scheduleDailyReminder(stepsGoal: 8000, healthManager: healthManager)
+                NotificationService.shared.scheduleDailyReminder(stepsGoal: 10000, healthManager: healthManager)
             }
         }
     }
 }
+
+#Preview {
+    ContentView()
+        .environmentObject(ProteinViewModel(
+            diaryRepository: SupabaseDiaryRepository(),
+            userProfileRepository: SupabaseUserProfileRepository()
+        ))
+        .environmentObject(AccountViewModel(
+            userProfileRepository: SupabaseUserProfileRepository()
+        ))
+        .environmentObject(AuthViewModel())
+        .environmentObject(HealthManager())
+}
+

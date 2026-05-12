@@ -4,6 +4,7 @@ struct AccountView: View {
     @EnvironmentObject var accountViewModel: AccountViewModel
     @EnvironmentObject var proteinViewModel: ProteinViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
+    @ObservedObject private var notificationStore = NotificationStore.shared
     @FocusState private var focusedField: Field?
 
     private enum Field { case name, weight, height }
@@ -201,6 +202,24 @@ struct AccountView: View {
             .navigationTitle("Account")
             .navigationBarTitleDisplayMode(.inline)
             .background(DesignTokens.Colors.background)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: NotificationInboxView()) {
+                        ZStack(alignment: .topTrailing) {
+                            Image(systemName: "bell.fill")
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(DesignTokens.Colors.text)
+                            if notificationStore.unreadCount > 0 {
+                                Circle()
+                                    .fill(DesignTokens.Colors.tomato)
+                                    .frame(width: 9, height: 9)
+                                    .offset(x: 5, y: -4)
+                            }
+                        }
+                        .padding(.trailing, 2)
+                    }
+                }
+            }
             .onTapGesture { focusedField = nil }
             .onChange(of: accountViewModel.name) { accountViewModel.saveAccount() }
             .onChange(of: accountViewModel.weight) { accountViewModel.saveAccount() }
