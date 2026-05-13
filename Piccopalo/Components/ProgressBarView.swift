@@ -29,10 +29,10 @@ struct VerticalProgressBar: View {
     private var pastaGradientHero: LinearGradient {
         LinearGradient(
             stops: [
-                .init(color: DesignTokens.Colors.layerC, location: 0),
-                .init(color: DesignTokens.Colors.layerB, location: 0.28),
-                .init(color: DesignTokens.Colors.layerA, location: 0.55),
-                .init(color: DesignTokens.Colors.layerD, location: 1),
+                .init(color: Theme.Colors.layerC, location: 0),
+                .init(color: Theme.Colors.layerB, location: 0.28),
+                .init(color: Theme.Colors.layerA, location: 0.55),
+                .init(color: Theme.Colors.layerD, location: 1),
             ],
             startPoint: .bottom,
             endPoint: .top
@@ -42,10 +42,10 @@ struct VerticalProgressBar: View {
     private var pastaGradientCompact: LinearGradient {
         LinearGradient(
             stops: [
-                .init(color: DesignTokens.Colors.layerC, location: 0),
-                .init(color: DesignTokens.Colors.layerB, location: 0.3),
-                .init(color: DesignTokens.Colors.layerA, location: 0.62),
-                .init(color: DesignTokens.Colors.layerD, location: 1),
+                .init(color: Theme.Colors.layerC, location: 0),
+                .init(color: Theme.Colors.layerB, location: 0.3),
+                .init(color: Theme.Colors.layerA, location: 0.62),
+                .init(color: Theme.Colors.layerD, location: 1),
             ],
             startPoint: .bottom,
             endPoint: .top
@@ -57,21 +57,21 @@ struct VerticalProgressBar: View {
     }
 
     private var glowAccentColor: Color {
-        if clamped >= 90 { return DesignTokens.Colors.green }
-        if clamped >= 50 { return DesignTokens.Colors.creamDeep }
-        return DesignTokens.Colors.tomato
+        if clamped >= 90 { return Theme.Colors.green }
+        if clamped >= 50 { return Theme.Colors.creamDeep }
+        return Theme.Colors.tomato
     }
 
     private var statusFillColor: Color {
-        clamped >= 100 ? DesignTokens.Colors.green : DesignTokens.Colors.creamDeep
+        clamped >= 100 ? Theme.Colors.green : g.Colors.creamDeep
     }
 
     private var defaultTrack: Color {
         switch style {
         case .pastaGradient:
-            return DesignTokens.Colors.surface
+            return Theme.Colors.surface
         case .statusTint:
-            return DesignTokens.Colors.surface2
+            return Theme.Colors.surface2
         }
     }
 
@@ -177,5 +177,5 @@ struct ProgressBarMini: View {
         }
     }
     .padding()
-    .background(DesignTokens.Colors.background)
+    .background(Theme.Colors.background)
 }

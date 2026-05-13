@@ -19,7 +19,7 @@ struct StepDotBar: View {
             HStack(spacing: spacing) {
                 ForEach(0..<dotCount, id: \.self) { i in
                     RoundedRectangle(cornerRadius: 3)
-                        .fill(i < filledDots ? DesignTokens.Colors.green : Color.white.opacity(0.08))
+                        .fill(i < filledDots ? Theme.Colors.green : Color.white.opacity(0.08))
                         .frame(width: dotWidth, height: 8)
                 }
             }

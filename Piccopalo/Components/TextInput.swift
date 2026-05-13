@@ -22,7 +22,7 @@ struct TextInput: View {
     let label: String
     @Binding var text: String
     var placeholder: String = ""
-    var placeholderColor: Color = DesignTokens.Colors.textDim
+    var placeholderColor: Color = Theme.Colors.textDim
     let unit: String?
     var keyboard: KeyboardKind = .text
     /// Optioneel: koppel aan `@FocusState` in de parent om het keyboard te sluiten (bijv. bij tik buiten het veld).
@@ -36,14 +36,14 @@ struct TextInput: View {
     var body: some View {
         let isActive = fieldFocus?.wrappedValue ?? isLocallyFocused
 
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
             if !label.isEmpty {
                 Text(label)
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(DesignTokens.Colors.textMuted)
+                    .foregroundStyle(Theme.Colors.textMuted)
             }
 
-            HStack(alignment: .center, spacing: DesignTokens.Spacing.md) {
+            HStack(alignment: .center, spacing: Theme.Spacing.md) {
                 Group {
                     if placeholder.isEmpty {
                         TextField("", text: $text)
@@ -58,15 +58,15 @@ struct TextInput: View {
                     .optionalFocused(fieldFocus, fallback: $isLocallyFocused)
                     .textInputKeyboard(keyboard)
                     .font(fieldFont)
-                    .foregroundStyle(DesignTokens.Colors.text)
+                    .foregroundStyle(Theme.Colors.text)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(DesignTokens.Colors.surface2)
+                            .fill(Theme.Colors.surface2)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                    .stroke(DesignTokens.Colors.cream.opacity(isActive ? 0.7 : 0), lineWidth: 1.2)
+                                    .stroke(Theme.Colors.cream.opacity(isActive ? 0.7 : 0), lineWidth: 1.2)
                             )
                     )
                     .animation(.easeInOut(duration: 0.15), value: isActive)
@@ -74,7 +74,7 @@ struct TextInput: View {
                 if let unit {
                     Text(unit)
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                         .fixedSize()
                 }
             }
@@ -118,7 +118,7 @@ private extension View {
                 TextInput(label: "Gewicht", text: $weight, placeholder: "0", unit: "kg", keyboard: .decimal)
             }
             .padding()
-            .background(DesignTokens.Colors.background)
+            .background(Theme.Colors.background)
         }
     }
     return PreviewWrapper()

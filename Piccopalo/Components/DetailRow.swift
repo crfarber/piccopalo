@@ -5,7 +5,7 @@ struct DetailRow: View {
     let value: String
     let valueColor: Color
 
-    init(_ label: String, _ value: String, color: Color = DesignTokens.Colors.text) {
+    init(_ label: String, _ value: String, color: Color = Theme.Colors.text) {
         self.label = label
         self.value = value
         self.valueColor = color
@@ -14,7 +14,7 @@ struct DetailRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .foregroundColor(DesignTokens.Colors.textMuted)
+                .foregroundColor(Theme.Colors.textMuted)
                 .font(.system(size: 15, weight: .regular))
 
             Spacer()
@@ -24,6 +24,6 @@ struct DetailRow: View {
                 .font(.system(size: 17, weight: .semibold, design: .default))
                 .monospacedDigit()
         }
-        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.vertical, Theme.Spacing.md)
     }
 }

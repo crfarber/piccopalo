@@ -14,27 +14,27 @@ struct HealthDetailsView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: DesignTokens.Spacing.lg) {
+            VStack(spacing: Theme.Spacing.lg) {
                 if !healthManager.isAuthorized {
                     // Authorization required
                     StyledCard {
-                        VStack(spacing: DesignTokens.Spacing.md) {
+                        VStack(spacing: Theme.Spacing.md) {
                             Image(systemName: "heart.fill")
                                 .font(.system(size: 32))
-                                .foregroundColor(DesignTokens.Colors.accent)
+                                .foregroundColor(Theme.Colors.accent)
 
                             Text("Gezondheidsgegevens")
                                 .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(DesignTokens.Colors.text)
+                                .foregroundColor(Theme.Colors.text)
 
                             Text("Geef Piccopalo toestemming om je gezondheidsgegevens te lezen uit de Health-app.")
                                 .font(.system(size: 13))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                                 .multilineTextAlignment(.center)
 
                             Text("Zie je geen opties in iOS Instellingen? Open dan de Health-app > Profiel > Apps > Piccopalo.")
                                 .font(.system(size: 12))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                                 .multilineTextAlignment(.center)
 
                             Button(action: {
@@ -46,8 +46,8 @@ struct HealthDetailsView: View {
                                     .font(.system(size: 14, weight: .semibold))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, DesignTokens.Spacing.md)
-                                    .background(DesignTokens.Colors.accent)
+                                    .padding(.vertical, Theme.Spacing.md)
+                                    .background(Theme.Colors.accent)
                                     .cornerRadius(8)
                             }
 
@@ -58,9 +58,9 @@ struct HealthDetailsView: View {
                             } label: {
                                 Text("Ververs gegevens")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.accent)
+                                    .foregroundColor(Theme.Colors.accent)
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical, DesignTokens.Spacing.sm)
+                                    .padding(.vertical, Theme.Spacing.sm)
                             }
 
                             Button {
@@ -75,43 +75,43 @@ struct HealthDetailsView: View {
                                     Spacer()
                                     Image(systemName: "arrow.up.right.square")
                                 }
-                                .foregroundColor(DesignTokens.Colors.accent)
+                                .foregroundColor(Theme.Colors.accent)
                             }
                         }
-                        .padding(DesignTokens.Spacing.lg)
+                        .padding(Theme.Spacing.lg)
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
                 } else {
                     // Health data cards
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                         SectionLabel("Vandaag", icon: "calendar")
                         
                         // Activity Suggestion Card
                         StyledCard {
-                            VStack(spacing: DesignTokens.Spacing.md) {
+                            VStack(spacing: Theme.Spacing.md) {
                                 HStack {
-                                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                                         Text("Aanbevolen activiteit (7 dagen)")
                                             .font(.system(size: 12, weight: .semibold))
-                                            .foregroundColor(DesignTokens.Colors.textMuted)
+                                            .foregroundColor(Theme.Colors.textMuted)
                                             .tracking(0.4)
                                             .textCase(.uppercase)
                                         
                                         Text(healthManager.getActivityLevel())
                                             .font(.system(size: 18, weight: .semibold))
-                                            .foregroundColor(DesignTokens.Colors.text)
+                                            .foregroundColor(Theme.Colors.text)
                                     }
                                     
                                     Spacer()
                                     
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 24))
-                                        .foregroundColor(DesignTokens.Colors.accent)
+                                        .foregroundColor(Theme.Colors.accent)
                                 }
 
                                 Text("Gebaseerd op je weekgemiddelde (70%) en vandaag (30%).")
                                     .font(.system(size: 12))
-                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .foregroundColor(Theme.Colors.textMuted)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
                                 Button(action: {
@@ -123,13 +123,13 @@ struct HealthDetailsView: View {
                                         .font(.system(size: 14, weight: .semibold))
                                         .foregroundColor(.white)
                                         .frame(maxWidth: .infinity)
-                                        .padding(.vertical, DesignTokens.Spacing.md)
-                                        .background(DesignTokens.Colors.accent)
+                                        .padding(.vertical, Theme.Spacing.md)
+                                        .background(Theme.Colors.accent)
                                         .cornerRadius(8)
                                 }
                             }
                         }
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         
                         // Data cards
                         HealthDataCard(
@@ -138,7 +138,7 @@ struct HealthDetailsView: View {
                             value: "\(healthManager.steps)",
                             unit: "stappen"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         
                         HealthDataCard(
                             icon: "flame.fill",
@@ -146,7 +146,7 @@ struct HealthDetailsView: View {
                             value: String(format: "%.0f", healthManager.activeEnergy),
                             unit: "kcal"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         
                         HealthDataCard(
                             icon: "heart.fill",
@@ -154,7 +154,7 @@ struct HealthDetailsView: View {
                             value: "\(healthManager.exerciseTime)",
                             unit: "minuten"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         
                         HealthDataCard(
                             icon: "figure.stairs",
@@ -162,7 +162,7 @@ struct HealthDetailsView: View {
                             value: String(format: "%.1f", healthManager.distance),
                             unit: "km"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                         
                         HealthDataCard(
                             icon: "arrow.up.right",
@@ -170,7 +170,7 @@ struct HealthDetailsView: View {
                             value: "\(healthManager.flightsClimbed)",
                             unit: "verdiepingen"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
 
                         SectionLabel("Weekgemiddelde", icon: "chart.line.uptrend.xyaxis")
 
@@ -180,7 +180,7 @@ struct HealthDetailsView: View {
                             value: "\(healthManager.weeklyAverageSteps)",
                             unit: "per dag"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
 
                         HealthDataCard(
                             icon: "flame.fill",
@@ -188,7 +188,7 @@ struct HealthDetailsView: View {
                             value: String(format: "%.0f", healthManager.weeklyAverageActiveEnergy),
                             unit: "kcal/dag"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
 
                         HealthDataCard(
                             icon: "heart.fill",
@@ -196,38 +196,38 @@ struct HealthDetailsView: View {
                             value: "\(healthManager.weeklyAverageExerciseTime)",
                             unit: "min/dag"
                         )
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                     }
                     
                     // Last updated
                     if let lastUpdated = healthManager.lastUpdated {
                         Text("Geüpdatet: \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
                             .font(.system(size: 11))
-                            .foregroundColor(DesignTokens.Colors.textMuted)
-                            .padding(.top, DesignTokens.Spacing.lg)
+                            .foregroundColor(Theme.Colors.textMuted)
+                            .padding(.top, Theme.Spacing.lg)
                     }
                 }
 
                 StyledCard {
-                    VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                    VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                         Text("Health toegang")
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundColor(DesignTokens.Colors.textMuted)
+                            .foregroundColor(Theme.Colors.textMuted)
                             .tracking(0.4)
                             .textCase(.uppercase)
 
                         Text("Toegang wijzigen: Health-app > Profiel > Apps > Piccopalo.")
                             .font(.system(size: 13))
-                            .foregroundColor(DesignTokens.Colors.textMuted)
+                            .foregroundColor(Theme.Colors.textMuted)
 
                         if healthManager.canRequestAuthorization {
                             Text("Nog niet afgerond: tik op 'Geef Toestemming'.")
                                 .font(.system(size: 13))
-                                .foregroundColor(DesignTokens.Colors.warning)
+                                .foregroundColor(Theme.Colors.warning)
                         } else {
                             Text("Autorisatie aangevraagd. Ververs als je net toestemming hebt aangepast.")
                                 .font(.system(size: 13))
-                                .foregroundColor(DesignTokens.Colors.green)
+                                .foregroundColor(Theme.Colors.green)
                         }
 
                         Button {
@@ -243,8 +243,8 @@ struct HealthDetailsView: View {
                                 Spacer()
                                 Image(systemName: "arrow.up.right.square")
                             }
-                            .foregroundColor(DesignTokens.Colors.accent)
-                            .padding(.top, DesignTokens.Spacing.sm)
+                            .foregroundColor(Theme.Colors.accent)
+                            .padding(.top, Theme.Spacing.sm)
                         }
 
                         Button {
@@ -259,52 +259,52 @@ struct HealthDetailsView: View {
                                 Spacer()
                                 Image(systemName: "arrow.up.right.square")
                             }
-                            .foregroundColor(DesignTokens.Colors.accent)
-                            .padding(.top, DesignTokens.Spacing.xs)
+                            .foregroundColor(Theme.Colors.accent)
+                            .padding(.top, Theme.Spacing.xs)
                         }
                     }
                 }
-                .padding(.horizontal, DesignTokens.Spacing.lg)
+                .padding(.horizontal, Theme.Spacing.lg)
 
                 if let errorMessage = healthManager.errorMessage {
                     StyledCard {
-                        HStack(alignment: .top, spacing: DesignTokens.Spacing.sm) {
+                        HStack(alignment: .top, spacing: Theme.Spacing.sm) {
                             Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(DesignTokens.Colors.warning)
+                                .foregroundColor(Theme.Colors.warning)
                             Text(errorMessage)
                                 .font(.system(size: 12))
-                                .foregroundColor(DesignTokens.Colors.warning)
+                                .foregroundColor(Theme.Colors.warning)
                                 .multilineTextAlignment(.leading)
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
                 }
 
                 if let diagnostics = healthManager.diagnostics {
                     StyledCard {
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                             Text("Debug")
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                                 .tracking(0.4)
                                 .textCase(.uppercase)
 
                             Text(diagnostics)
                                 .font(.system(size: 12))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                                 .multilineTextAlignment(.leading)
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
                 }
                 
-                Spacer(minLength: DesignTokens.Spacing.lg)
+                Spacer(minLength: Theme.Spacing.lg)
             }
-            .padding(.vertical, DesignTokens.Spacing.lg)
+            .padding(.vertical, Theme.Spacing.lg)
         }
         .navigationTitle("Gezondheid")
         .navigationBarTitleDisplayMode(.inline)
-        .background(DesignTokens.Colors.background)
+        .background(Theme.Colors.background)
         .refreshable {
             await refreshHealthData()
         }
@@ -324,21 +324,21 @@ struct HealthDataCard: View {
     
     var body: some View {
         StyledCard {
-            HStack(spacing: DesignTokens.Spacing.md) {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+            HStack(spacing: Theme.Spacing.md) {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     Text(title)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundColor(DesignTokens.Colors.textMuted)
+                        .foregroundColor(Theme.Colors.textMuted)
                         .tracking(0.4)
                         .textCase(.uppercase)
                     
                     HStack(spacing: 4) {
                         Text(value)
                             .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(DesignTokens.Colors.text)
+                            .foregroundColor(Theme.Colors.text)
                         Text(unit)
                             .font(.system(size: 13))
-                            .foregroundColor(DesignTokens.Colors.textMuted)
+                            .foregroundColor(Theme.Colors.textMuted)
                     }
                 }
                 
@@ -346,7 +346,7 @@ struct HealthDataCard: View {
                 
                 Image(systemName: icon)
                     .font(.system(size: 24))
-                    .foregroundColor(DesignTokens.Colors.accent)
+                    .foregroundColor(Theme.Colors.accent)
             }
         }
     }

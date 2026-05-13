@@ -29,23 +29,23 @@ struct ScanResultView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: DesignTokens.Spacing.lg) {
+                VStack(spacing: Theme.Spacing.lg) {
                     StyledCard {
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                             SectionLabel("Gescand product", icon: "barcode.viewfinder")
                             Text(product.name)
                                 .font(.system(size: 22, weight: .semibold))
-                                .foregroundColor(DesignTokens.Colors.text)
+                                .foregroundColor(Theme.Colors.text)
 
                             Text("\(String(format: "%.1f", product.proteinPer100g))g eiwit per 100g")
                                 .font(.system(size: 15))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
 
                     StyledCard {
-                        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                             SectionLabel("Portie", icon: "scalemass")
 
                             TextInput(
@@ -69,32 +69,32 @@ struct ScanResultView: View {
                             HStack {
                                 Text("Totaal")
                                     .font(.system(size: 15, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .foregroundColor(Theme.Colors.textMuted)
                                 Spacer()
                                 Text("\(String(format: "%.2f", totalProtein))g eiwit")
                                     .font(.system(size: 22, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.green)
+                                    .foregroundColor(Theme.Colors.green)
                             }
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
 
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                         PrimaryButton(title: "Voeg toe aan vandaag", icon: "plus.circle.fill", action: {
                             onConfirm(portionValue)
-                        }, color: DesignTokens.Colors.green, isDisabled: portionValue <= 0)
+                        }, color: Theme.Colors.green, isDisabled: portionValue <= 0)
 
                         Button(action: onCancel) {
                             Text("Annuleer")
                                 .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(DesignTokens.Colors.textMuted)
+                                .foregroundColor(Theme.Colors.textMuted)
                         }
                     }
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
+                    .padding(.horizontal, Theme.Spacing.lg)
                 }
-                .padding(.vertical, DesignTokens.Spacing.lg)
+                .padding(.vertical, Theme.Spacing.lg)
             }
-            .background(DesignTokens.Colors.background)
+            .background(Theme.Colors.background)
             .navigationTitle("Scan resultaat")
             .navigationBarTitleDisplayMode(.inline)
         }

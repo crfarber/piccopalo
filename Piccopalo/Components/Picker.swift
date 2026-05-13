@@ -18,24 +18,24 @@ struct FormMenuRow<Option, ID: Hashable>: View {
         } label: {
             HStack {
                 Text(title)
-                    .foregroundColor(DesignTokens.Colors.textMuted)
+                    .foregroundColor(Theme.Colors.textMuted)
 
                 Spacer()
 
-                HStack(spacing: DesignTokens.Spacing.sm) {
+                HStack(spacing: Theme.Spacing.sm) {
                     Text(selectionText)
-                        .foregroundStyle(DesignTokens.Colors.text)
+                        .foregroundStyle(Theme.Colors.text)
 
                     Image(systemName: "chevron.up.chevron.down")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(DesignTokens.Colors.cream)
+                        .foregroundStyle(Theme.Colors.cream)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, DesignTokens.Spacing.md)
+            .padding(.vertical, Theme.Spacing.md)
             .contentShape(Rectangle())
         }
-        .tint(DesignTokens.Colors.cream)
+        .tint(Theme.Colors.cream)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

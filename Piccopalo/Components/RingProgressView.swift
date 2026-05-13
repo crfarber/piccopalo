@@ -30,7 +30,7 @@ struct RingProgressView: View {
                     .trim(from: 0, to: CGFloat(percentage))
                     .stroke(
                         LinearGradient(
-                            colors: [DesignTokens.Colors.green.opacity(0.75), DesignTokens.Colors.green],
+                            colors: [Theme.Colors.green.opacity(0.75), Theme.Colors.green],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -43,12 +43,12 @@ struct RingProgressView: View {
                 VStack(spacing: 2) {
                     Text(String(format: "%.0f", consumed))
                         .font(.system(size: size * 0.23, weight: .bold, design: .default))
-                        .foregroundColor(DesignTokens.Colors.text)
+                        .foregroundColor(Theme.Colors.text)
                         .monospacedDigit()
 
                     Text("VAN \(Int(goal))G EIWIT")
                         .font(.system(size: size * 0.055, weight: .semibold))
-                        .foregroundColor(DesignTokens.Colors.textMuted)
+                        .foregroundColor(Theme.Colors.textMuted)
                         .tracking(0.8)
                 }
             }

@@ -9,27 +9,27 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            DesignTokens.Colors.background
+            Theme.Colors.background
                 .ignoresSafeArea()
 
-            VStack(spacing: DesignTokens.Spacing.xxl) {
+            VStack(spacing: Theme.Spacing.xxl) {
                 Spacer()
 
                 // Logo / titel
-                VStack(spacing: DesignTokens.Spacing.sm) {
+                VStack(spacing: Theme.Spacing.sm) {
                     Text("Piccopalo")
-                        .font(.custom(DesignTokens.Typography.displayFont, size: 40))
-                        .foregroundColor(DesignTokens.Colors.cream)
+                        .font(.custom(Theme.Typography.displayFont, size: 40))
+                        .foregroundColor(Theme.Colors.cream)
 
                     Text(isSignUp ? "Maak een account aan" : "Welkom terug")
                         .font(.system(size: 16, weight: .regular))
-                        .foregroundColor(DesignTokens.Colors.textMuted)
+                        .foregroundColor(Theme.Colors.textMuted)
                 }
 
                 Spacer()
 
                 // Formulier
-                VStack(spacing: DesignTokens.Spacing.md) {
+                VStack(spacing: Theme.Spacing.md) {
                     inputField(
                         label: "E-mailadres",
                         text: $email,
@@ -47,9 +47,9 @@ struct LoginView: View {
                     if let error = authViewModel.errorMessage {
                         Text(error)
                             .font(.system(size: 14))
-                            .foregroundColor(DesignTokens.Colors.tomato)
+                            .foregroundColor(Theme.Colors.tomato)
                             .multilineTextAlignment(.center)
-                            .padding(.top, DesignTokens.Spacing.xs)
+                            .padding(.top, Theme.Spacing.xs)
                     }
                 }
 
@@ -80,18 +80,18 @@ struct LoginView: View {
                          ? "Al een account? **Inloggen**"
                          : "Nog geen account? **Registreren**")
                         .font(.system(size: 14))
-                        .foregroundColor(DesignTokens.Colors.textMuted)
+                        .foregroundColor(Theme.Colors.textMuted)
                 }
 
                 Spacer()
             }
-            .padding(.horizontal, DesignTokens.Spacing.xxl)
+            .padding(.horizontal, Theme.Spacing.xxl)
 
             if authViewModel.isLoading {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
                 ProgressView()
-                    .tint(DesignTokens.Colors.cream)
+                    .tint(Theme.Colors.cream)
                     .scaleEffect(1.4)
             }
         }
@@ -106,10 +106,10 @@ struct LoginView: View {
         keyboard: UIKeyboardType,
         isSecure: Bool
     ) -> some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
             Text(label)
                 .font(.system(size: 13, weight: .medium))
-                .foregroundColor(DesignTokens.Colors.textMuted)
+                .foregroundColor(Theme.Colors.textMuted)
 
             Group {
                 if isSecure {
@@ -121,12 +121,12 @@ struct LoginView: View {
                         .autocorrectionDisabled()
                 }
             }
-            .padding(DesignTokens.Spacing.lg)
-            .background(DesignTokens.Colors.surface)
-            .foregroundColor(DesignTokens.Colors.text)
-            .cornerRadius(DesignTokens.Radius.md)
+            .padding(Theme.Spacing.lg)
+            .background(Theme.Colors.surface)
+            .foregroundColor(Theme.Colors.text)
+            .cornerRadius(Theme.Radius.md)
             .overlay(
-                RoundedRectangle(cornerRadius: DesignTokens.Radius.md)
+                RoundedRectangle(cornerRadius: Theme.Radius.md)
                     .stroke(Color.white.opacity(0.08), lineWidth: 1)
             )
         }

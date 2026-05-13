@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct DesignTokens {
+struct Theme {
     // MARK: - Colors (Palette)
     struct Colors {
         // Surfaces

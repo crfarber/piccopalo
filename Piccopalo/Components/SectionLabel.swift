@@ -10,7 +10,7 @@ struct SectionLabel: View {
     }
 
     var body: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
+        HStack(spacing: Theme.Spacing.sm) {
             if let icon = icon {
                 Image(systemName: icon)
                     .font(.system(size: 13))
@@ -20,8 +20,8 @@ struct SectionLabel: View {
                 .tracking(0.4)
                 .textCase(.uppercase)
         }
-        .foregroundColor(DesignTokens.Colors.textMuted)
-        .padding(.top, DesignTokens.Spacing.lg)
-        .padding(.bottom, DesignTokens.Spacing.sm)
+        .foregroundColor(Theme.Colors.textMuted)
+        .padding(.top, Theme.Spacing.lg)
+        .padding(.bottom, Theme.Spacing.sm)
     }
 }

@@ -18,7 +18,7 @@ struct ContentView: View {
                         }
                 }
                 .tint(.green)
-                .toolbarBackground(DesignTokens.Colors.background, for: .tabBar)
+                .toolbarBackground(Theme.Colors.background, for: .tabBar)
                 .toolbarBackground(.visible, for: .tabBar)
                 .toolbarColorScheme(.dark, for: .tabBar)
             }

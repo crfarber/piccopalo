@@ -17,30 +17,30 @@ struct BarcodeScannerView: View {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .semibold))
                             .padding(10)
-                            .background(DesignTokens.Colors.surface.opacity(0.85))
+                            .background(Theme.Colors.surface.opacity(0.85))
                             .clipShape(Circle())
-                            .foregroundColor(DesignTokens.Colors.text)
+                            .foregroundColor(Theme.Colors.text)
                     }
                     Spacer()
                 }
-                .padding(.horizontal, DesignTokens.Spacing.lg)
-                .padding(.top, DesignTokens.Spacing.xl)
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.top, Theme.Spacing.xl)
 
                 Spacer()
 
-                VStack(spacing: DesignTokens.Spacing.sm) {
+                VStack(spacing: Theme.Spacing.sm) {
                     Text("Richt op de barcode")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(DesignTokens.Colors.text)
+                        .foregroundColor(Theme.Colors.text)
                     Text("We herkennen EAN13 en UPC")
                         .font(.system(size: 13))
-                        .foregroundColor(DesignTokens.Colors.textMuted)
+                        .foregroundColor(Theme.Colors.textMuted)
                 }
-                .padding(DesignTokens.Spacing.lg)
-                .background(DesignTokens.Colors.surface.opacity(0.85))
-                .cornerRadius(DesignTokens.Radius.md)
-                .padding(.horizontal, DesignTokens.Spacing.lg)
-                .padding(.bottom, DesignTokens.Spacing.xxl)
+                .padding(Theme.Spacing.lg)
+                .background(Theme.Colors.surface.opacity(0.85))
+                .cornerRadius(Theme.Radius.md)
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.bottom, Theme.Spacing.xxl)
             }
         }
     }

@@ -52,9 +52,9 @@ struct DayDetailView: View {
 
     private var resultStatusColor: Color {
         if currentRecord.proteinConsumed >= currentRecord.proteinGoal, currentRecord.proteinGoal > 0 {
-            return DesignTokens.Colors.green
+            return Theme.Colors.green
         }
-        return DesignTokens.Colors.textMuted
+        return Theme.Colors.textMuted
     }
 
     private var heroPercentSize: CGFloat {
@@ -70,9 +70,9 @@ struct DayDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: DesignTokens.Spacing.lg) {
+            VStack(spacing: Theme.Spacing.lg) {
                 detailHeader
-                    .padding(.top, DesignTokens.Spacing.sm)
+                    .padding(.top, Theme.Spacing.sm)
 
                 resultCard
 
@@ -82,11 +82,11 @@ struct DayDetailView: View {
 
                 manualSection
             }
-            .padding(.horizontal, DesignTokens.Spacing.lg)
-            .padding(.bottom, DesignTokens.Spacing.xxl)
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
         }
         .scrollDismissesKeyboard(.immediately)
-        .background(DesignTokens.Colors.background)
+        .background(Theme.Colors.background)
         .navigationBarHidden(true)
         .onAppear {
             let weight = effectiveWeight
@@ -106,18 +106,18 @@ struct DayDetailView: View {
     }
 
     private var detailHeader: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             HStack(alignment: .center) {
                 Button {
                     dismiss()
                 } label: {
-                    HStack(spacing: DesignTokens.Spacing.xs) {
+                    HStack(spacing: Theme.Spacing.xs) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 17, weight: .semibold))
                         Text("Terug")
                             .font(.system(size: 17, weight: .semibold))
                     }
-                    .foregroundStyle(DesignTokens.Colors.green)
+                    .foregroundStyle(Theme.Colors.green)
                 }
                 .accessibilityLabel("Terug")
 
@@ -128,14 +128,14 @@ struct DayDetailView: View {
                 } label: {
                     Image(systemName: "square.and.pencil")
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.text)
+                        .foregroundStyle(Theme.Colors.text)
                 }
                 .accessibilityLabel("Handmatig aanpassen")
             }
 
             Text(navigationTitleDate)
-                .font(.custom(DesignTokens.Typography.displayFont, size: 28, relativeTo: .title2))
-                .foregroundStyle(DesignTokens.Colors.cream)
+                .font(.custom(Theme.Typography.displayFont, size: 28, relativeTo: .title2))
+                .foregroundStyle(Theme.Colors.cream)
                 .minimumScaleFactor(0.85)
                 .lineLimit(2)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -144,20 +144,20 @@ struct DayDetailView: View {
 
     private var resultCard: some View {
         StyledCard {
-            HStack(alignment: .center, spacing: DesignTokens.Spacing.lg) {
+            HStack(alignment: .center, spacing: Theme.Spacing.lg) {
                 ProgressBar(percentage: percentage, size: 72, showGlow: true)
                     .frame(width: 72, height: 86)
 
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                     Text("Resultaat")
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                         .tracking(0.4)
                         .textCase(.uppercase)
 
                     Text("\(displayPercentageWhole)%")
-                        .font(.custom(DesignTokens.Typography.displayFont, size: heroPercentSize, relativeTo: .title))
-                        .foregroundStyle(DesignTokens.Colors.text)
+                        .font(.custom(Theme.Typography.displayFont, size: heroPercentSize, relativeTo: .title))
+                        .foregroundStyle(Theme.Colors.text)
                         .minimumScaleFactor(0.75)
                         .lineLimit(1)
 
@@ -167,7 +167,7 @@ struct DayDetailView: View {
 
                     Text("\(grams(currentRecord.proteinConsumed))g van \(grams(currentRecord.proteinGoal))g")
                         .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                 }
 
                 Spacer(minLength: 0)
@@ -177,7 +177,7 @@ struct DayDetailView: View {
     }
 
     private var gegevensSection: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             SectionLabel("Gegevens", icon: "person.fill")
 
             StyledCard {
@@ -189,10 +189,10 @@ struct DayDetailView: View {
 
                     HStack(alignment: .center) {
                         Text("Activiteit")
-                            .foregroundStyle(DesignTokens.Colors.textMuted)
+                            .foregroundStyle(Theme.Colors.textMuted)
                             .font(.system(size: 15, weight: .regular))
 
-                        Spacer(minLength: DesignTokens.Spacing.sm)
+                        Spacer(minLength: Theme.Spacing.sm)
 
                         Picker("", selection: activityFactorBinding) {
                             ForEach(accountViewModel.activityOptions, id: \.factor) { option in
@@ -201,10 +201,10 @@ struct DayDetailView: View {
                             }
                         }
                         .pickerStyle(.menu)
-                        .tint(DesignTokens.Colors.cream)
+                        .tint(Theme.Colors.cream)
                         .accessibilityLabel("Activiteit")
                     }
-                    .padding(.vertical, DesignTokens.Spacing.md)
+                    .padding(.vertical, Theme.Spacing.md)
 
                     Divider()
                         .background(Color.white.opacity(0.08))
@@ -226,17 +226,17 @@ struct DayDetailView: View {
     }
 
     private var manualSection: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             SectionLabel("Handmatig aanpassen", icon: "square.and.pencil")
 
             StyledCard {
-                VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+                VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                     Text("Pas alleen deze dag aan. Je kunt fouten achteraf corrigeren.")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    HStack(alignment: .bottom, spacing: DesignTokens.Spacing.sm) {
+                    HStack(alignment: .bottom, spacing: Theme.Spacing.sm) {
                         TextInput(
                             label: "",
                             text: $proteinConsumedInput,
@@ -251,10 +251,10 @@ struct DayDetailView: View {
                             Text("Opslaan")
                                 .fontWeight(.semibold)
                                 .foregroundStyle(Color(red: 0.1, green: 0.1, blue: 0.1))
-                                .padding(.horizontal, DesignTokens.Spacing.md)
-                                .padding(.vertical, DesignTokens.Spacing.sm)
-                                .background(DesignTokens.Colors.cream)
-                                .cornerRadius(DesignTokens.Radius.md)
+                                .padding(.horizontal, Theme.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.sm)
+                                .background(Theme.Colors.cream)
+                                .cornerRadius(Theme.Radius.md)
                         }
                     }
                 }
@@ -263,43 +263,43 @@ struct DayDetailView: View {
     }
 
     private var mealEntriesSection: some View {
-        VStack(alignment: .leading, spacing: DesignTokens.Spacing.md) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.md) {
             SectionLabel("Innames", icon: "list.bullet")
 
             StyledCard {
                 if currentRecord.entries.isEmpty {
                     Text("Nog geen losse innames opgeslagen voor deze dag.")
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.vertical, DesignTokens.Spacing.sm)
+                        .padding(.vertical, Theme.Spacing.sm)
                 } else {
                     VStack(spacing: 0) {
                         ForEach(Array(currentRecord.entries.enumerated()), id: \.element.id) { index, entry in
-                            HStack(alignment: .top, spacing: DesignTokens.Spacing.sm) {
+                            HStack(alignment: .top, spacing: Theme.Spacing.sm) {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(entry.sourceName)
                                         .font(.system(size: 15, weight: .semibold))
-                                        .foregroundStyle(DesignTokens.Colors.text)
+                                        .foregroundStyle(Theme.Colors.text)
 
                                     Text("\(quantity(entry.quantity))\(entry.unit.symbol) -> \(quantity(entry.proteinAmount))g eiwit")
                                         .font(.system(size: 13, weight: .medium))
-                                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                                        .foregroundStyle(Theme.Colors.textMuted)
                                 }
 
-                                Spacer(minLength: DesignTokens.Spacing.sm)
+                                Spacer(minLength: Theme.Spacing.sm)
 
                                 Button {
                                     removeEntry(entry)
                                 } label: {
                                     Image(systemName: "trash")
                                         .font(.system(size: 14, weight: .semibold))
-                                        .foregroundStyle(DesignTokens.Colors.tomato)
+                                        .foregroundStyle(Theme.Colors.tomato)
                                 }
                                 .buttonStyle(.plain)
                                 .accessibilityLabel("Verwijder inname")
                             }
-                            .padding(.vertical, DesignTokens.Spacing.md)
+                            .padding(.vertical, Theme.Spacing.md)
 
                             if index < currentRecord.entries.count - 1 {
                                 Divider()
@@ -315,15 +315,15 @@ struct DayDetailView: View {
     private func rowLabelLeftValueRight(label: String, value: String) -> some View {
         HStack {
             Text(label)
-                .foregroundStyle(DesignTokens.Colors.textMuted)
+                .foregroundStyle(Theme.Colors.textMuted)
                 .font(.system(size: 15, weight: .regular))
             Spacer()
             Text(value)
-                .foregroundStyle(DesignTokens.Colors.text)
+                .foregroundStyle(Theme.Colors.text)
                 .font(.system(size: 17, weight: .semibold))
                 .monospacedDigit()
         }
-        .padding(.vertical, DesignTokens.Spacing.md)
+        .padding(.vertical, Theme.Spacing.md)
     }
 
     private func trimFactor(_ value: Double) -> String {

@@ -23,13 +23,13 @@ struct HistoryView: View {
                     header
 
                     weekStrip
-                        .padding(.top, DesignTokens.Spacing.lg)
-                        .padding(.bottom, DesignTokens.Spacing.md)
+                        .padding(.top, Theme.Spacing.lg)
+                        .padding(.bottom, Theme.Spacing.md)
 
                     if records.isEmpty {
                         emptyState
                             .frame(maxWidth: .infinity)
-                            .padding(.top, DesignTokens.Spacing.xxl)
+                            .padding(.top, Theme.Spacing.xxl)
                     } else {
                         StyledCard {
                             VStack(alignment: .leading, spacing: 0) {
@@ -37,9 +37,9 @@ struct HistoryView: View {
                                     .font(.system(size: 13, weight: .semibold))
                                     .tracking(0.4)
                                     .textCase(.uppercase)
-                                    .foregroundStyle(DesignTokens.Colors.textMuted)
+                                    .foregroundStyle(Theme.Colors.textMuted)
                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.bottom, DesignTokens.Spacing.md)
+                                    .padding(.bottom, Theme.Spacing.md)
 
                                 ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
                                     NavigationLink(destination: DayDetailView(record: record)) {
@@ -56,11 +56,11 @@ struct HistoryView: View {
                         }
                     }
                 }
-                .padding(.horizontal, DesignTokens.Spacing.lg)
-                .padding(.bottom, DesignTokens.Spacing.xxl)
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.bottom, Theme.Spacing.xxl)
             }
             .scrollDismissesKeyboard(.immediately)
-            .background(DesignTokens.Colors.background)
+            .background(Theme.Colors.background)
             .navigationBarHidden(true)
             .task {
                 await reloadRecords()
@@ -73,14 +73,14 @@ struct HistoryView: View {
 
     private var header: some View {
         HStack(alignment: .top) {
-            VStack(alignment: .leading, spacing: DesignTokens.Spacing.xs) {
+            VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
                 Text("Geschiedenis")
-                    .font(.custom(DesignTokens.Typography.displayFont, size: 34, relativeTo: .largeTitle))
-                    .foregroundStyle(DesignTokens.Colors.cream)
+                    .font(.custom(Theme.Typography.displayFont, size: 34, relativeTo: .largeTitle))
+                    .foregroundStyle(Theme.Colors.cream)
 
                 Text("De laatste 7 dagen")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(DesignTokens.Colors.textMuted)
+                    .foregroundStyle(Theme.Colors.textMuted)
             }
 
             Spacer()
@@ -88,15 +88,15 @@ struct HistoryView: View {
             Button(action: {}) {
                 Image(systemName: "calendar")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(DesignTokens.Colors.text)
+                    .foregroundStyle(Theme.Colors.text)
             }
             .accessibilityLabel("Kalender")
         }
-        .padding(.top, DesignTokens.Spacing.md)
+        .padding(.top, Theme.Spacing.md)
     }
 
     private var weekStrip: some View {
-        HStack(spacing: DesignTokens.Spacing.sm) {
+        HStack(spacing: Theme.Spacing.sm) {
             ForEach(lastSevenDays, id: \.self) { date in
                 let key = HistoryFormatting.isoString(from: date)
                 let consumed = recordsByDate[key]?.proteinConsumed ?? 0
@@ -108,19 +108,19 @@ struct HistoryView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: DesignTokens.Spacing.md) {
+        VStack(spacing: Theme.Spacing.md) {
             Text("📅")
                 .font(.system(size: 56))
             Text("Nog geen data")
                 .font(.title2)
                 .fontWeight(.semibold)
-                .foregroundStyle(DesignTokens.Colors.text)
+                .foregroundStyle(Theme.Colors.text)
             Text("Voeg vandaag je eerste eiwitinname toe!")
                 .font(.subheadline)
-                .foregroundStyle(DesignTokens.Colors.textMuted)
+                .foregroundStyle(Theme.Colors.textMuted)
                 .multilineTextAlignment(.center)
         }
-        .padding(DesignTokens.Spacing.lg)
+        .padding(Theme.Spacing.lg)
     }
 
     private func reloadRecords() async {
@@ -135,10 +135,10 @@ private struct HistoryWeekDayColumn: View {
     let percentage: Double
 
     var body: some View {
-        VStack(spacing: DesignTokens.Spacing.sm) {
+        VStack(spacing: Theme.Spacing.sm) {
             Text(HistoryFormatting.weekStripLabel(for: date))
                 .font(.system(size: 10, weight: .semibold))
-                .foregroundStyle(DesignTokens.Colors.textMuted)
+                .foregroundStyle(Theme.Colors.textMuted)
 
             VerticalProgressBar(
                 percentage: percentage,
@@ -153,7 +153,7 @@ private struct HistoryWeekDayColumn: View {
 
             Text("\(Int(round(percentage)))%")
                 .font(.system(size: 11, weight: .semibold))
-                .foregroundStyle(DesignTokens.Colors.text)
+                .foregroundStyle(Theme.Colors.text)
                 .monospacedDigit()
         }
         .frame(maxWidth: .infinity)
@@ -171,7 +171,7 @@ struct HistoryRowView: View {
     }
 
     var body: some View {
-        HStack(alignment: .center, spacing: DesignTokens.Spacing.md) {
+        HStack(alignment: .center, spacing: Theme.Spacing.md) {
             VerticalProgressBar(
                 percentage: percentage,
                 width: 15,
@@ -187,21 +187,21 @@ struct HistoryRowView: View {
                 HStack(spacing: 6) {
                     Text(HistoryFormatting.primaryDayLabel(isoDate: record.date))
                         .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(DesignTokens.Colors.text)
+                        .foregroundStyle(Theme.Colors.text)
 
                     Text(HistoryFormatting.dayAndMonthNL(isoDate: record.date))
                         .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.textMuted)
+                        .foregroundStyle(Theme.Colors.textMuted)
                 }
 
                 Text("\(grams(record.proteinConsumed))g van \(grams(record.proteinGoal))g")
                     .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(DesignTokens.Colors.textMuted)
+                    .foregroundStyle(Theme.Colors.textMuted)
                 
                 if let stepsCount = record.stepsCount, stepsCount > 0 {
                     Text("\(Int(round(stepsCount))) stappen")
                         .font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(DesignTokens.Colors.green)
+                        .foregroundStyle(Theme.Colors.green)
                 }
             }
 
@@ -209,10 +209,10 @@ struct HistoryRowView: View {
 
             Text("\(Int(round(percentage)))%")
                 .font(.system(size: 16, weight: .semibold))
-                .foregroundStyle(DesignTokens.Colors.text)
+                .foregroundStyle(Theme.Colors.text)
                 .monospacedDigit()
         }
-        .padding(.vertical, DesignTokens.Spacing.sm)
+        .padding(.vertical, Theme.Spacing.sm)
     }
 
     private func grams(_ value: Double) -> String {

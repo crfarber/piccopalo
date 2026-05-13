@@ -5,9 +5,9 @@ struct StyledProgressBar: View {
 
     var barColor: Color {
         switch percentage {
-        case ..<50: return DesignTokens.Colors.tomato
-        case 50..<90: return DesignTokens.Colors.creamDeep
-        default: return DesignTokens.Colors.green
+        case ..<50: return Theme.Colors.tomato
+        case 50..<90: return Theme.Colors.creamDeep
+        default: return Theme.Colors.green
         }
     }
 

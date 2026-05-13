@@ -14,14 +14,14 @@ struct AccountView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     // Header
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                         ZStack {
                             Circle()
                                 .fill(
                                     LinearGradient(
                                         gradient: Gradient(colors: [
-                                            DesignTokens.Colors.cream,
-                                            DesignTokens.Colors.creamDeep
+                                            Theme.Colors.cream,
+                                            Theme.Colors.creamDeep
                                         ]),
                                         startPoint: .topLeading,
                                         endPoint: .bottomTrailing
@@ -33,39 +33,39 @@ struct AccountView: View {
                                 .font(.system(size: 38, weight: .semibold))
                                 .foregroundColor(Color(red: 0.1, green: 0.1, blue: 0.1))
                         }
-                        .padding(.top, DesignTokens.Spacing.lg)
+                        .padding(.top, Theme.Spacing.lg)
 
                         Text(accountViewModel.name)
                             .font(.system(size: 26, weight: .semibold))
-                            .foregroundColor(DesignTokens.Colors.text)
+                            .foregroundColor(Theme.Colors.text)
 
                         Text("Daily goal: \(String(format: "%.0f", accountViewModel.dailyProteinGoal))g")
                             .font(.system(size: 13))
-                            .foregroundColor(DesignTokens.Colors.textMuted)
+                            .foregroundColor(Theme.Colors.textMuted)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.bottom, DesignTokens.Spacing.xxl)
+                    .padding(.bottom, Theme.Spacing.xxl)
 
                     // Protein goal card
                     StyledCard {
-                        HStack(alignment: .center, spacing: DesignTokens.Spacing.md) {
+                        HStack(alignment: .center, spacing: Theme.Spacing.md) {
                             ProgressBarMini(percentage: proteinViewModel.percentage)
                                 .frame(width: 42, height: 60)
 
-                            VStack(alignment: .leading, spacing: DesignTokens.Spacing.sm) {
+                            VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
                                 Text("Eiwitdoel")
                                     .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .foregroundColor(Theme.Colors.textMuted)
                                     .tracking(0.4)
                                     .textCase(.uppercase)
 
                                 HStack(spacing: 4) {
                                     Text(String(format: "%.0f", accountViewModel.dailyProteinGoal))
                                         .font(.system(size: 22, weight: .semibold))
-                                        .foregroundStyle(DesignTokens.Colors.text)
+                                        .foregroundStyle(Theme.Colors.text)
                                     Text("g/dag")
                                         .font(.system(size: 14, weight: .semibold))
-                                        .foregroundColor(DesignTokens.Colors.textMuted)
+                                        .foregroundColor(Theme.Colors.textMuted)
                                 }
                             }
 
@@ -74,88 +74,88 @@ struct AccountView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, DesignTokens.Spacing.lg)
-                    .padding(.bottom, DesignTokens.Spacing.xl)
+                    .padding(.horizontal, Theme.Spacing.lg)
+                    .padding(.bottom, Theme.Spacing.xl)
 
 
                     // Your data section
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                         SectionLabel("Jouw gegevens", icon: "person.fill")
 
                         StyledCard {
                             VStack(spacing: 0) {
                                 HStack {
                                     Text("Naam")
-                                        .foregroundColor(DesignTokens.Colors.textMuted)
+                                        .foregroundColor(Theme.Colors.textMuted)
                                     Spacer()
                                     TextField("Naam", text: $accountViewModel.name)
-                                        .foregroundStyle(DesignTokens.Colors.text)
+                                        .foregroundStyle(Theme.Colors.text)
                                         .multilineTextAlignment(.trailing)
                                         .focused($focusedField, equals: .name)
                                         .accountFieldStyle(isActive: focusedField == .name)
                                         .onSubmit { accountViewModel.saveAccount() }
                                 }
-                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.md)
 
                                 Divider()
                                     .background(Color.white.opacity(0.08))
 
                                 HStack {
                                     Text("Gewicht (kg)")
-                                        .foregroundColor(DesignTokens.Colors.textMuted)
+                                        .foregroundColor(Theme.Colors.textMuted)
                                     Spacer()
                                     TextField("0", text: $accountViewModel.weight)
-                                        .foregroundStyle(DesignTokens.Colors.text)
+                                        .foregroundStyle(Theme.Colors.text)
                                         .keyboardType(.decimalPad)
                                         .multilineTextAlignment(.trailing)
                                         .focused($focusedField, equals: .weight)
                                         .accountFieldStyle(isActive: focusedField == .weight)
                                         .onSubmit { accountViewModel.saveAccount() }
                                 }
-                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.md)
 
                                 Divider()
                                     .background(Color.white.opacity(0.08))
 
                                 HStack {
                                     Text("Lengte (cm)")
-                                        .foregroundColor(DesignTokens.Colors.textMuted)
+                                        .foregroundColor(Theme.Colors.textMuted)
                                     Spacer()
                                     TextField("0", text: $accountViewModel.height)
-                                        .foregroundStyle(DesignTokens.Colors.text)
+                                        .foregroundStyle(Theme.Colors.text)
                                         .keyboardType(.decimalPad)
                                         .multilineTextAlignment(.trailing)
                                         .focused($focusedField, equals: .height)
                                         .accountFieldStyle(isActive: focusedField == .height)
                                         .onSubmit { accountViewModel.saveAccount() }
                                 }
-                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.md)
                             }
                         }
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                     }
 
                     // Activity section
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                     
                         SectionLabel("Activiteit", icon: "dumbbell.fill")
                         NavigationLink(destination: HealthDetailsView()) {
                             HStack {
                                 Image(systemName: "heart.fill")
-                                    .foregroundColor(DesignTokens.Colors.accent)
+                                    .foregroundColor(Theme.Colors.accent)
                                 
                                 Text("Gezondheidsgegevens")
                                     .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.accent)
+                                    .foregroundColor(Theme.Colors.accent)
                                 
                                 Spacer()
                                 
                                 Image(systemName: "chevron.right")
                                     .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(DesignTokens.Colors.textMuted)
+                                    .foregroundColor(Theme.Colors.textMuted)
                             }
-                            .padding(.horizontal, DesignTokens.Spacing.lg)
-                            .padding(.vertical, DesignTokens.Spacing.md)
+                            .padding(.horizontal, Theme.Spacing.lg)
+                            .padding(.vertical, Theme.Spacing.md)
                         }
                         
                             StyledCard {
@@ -171,11 +171,11 @@ struct AccountView: View {
                                     }
                                 )
                             }
-                            .padding(.horizontal, DesignTokens.Spacing.lg)
+                            .padding(.horizontal, Theme.Spacing.lg)
                     }
 
                     // Uitloggen
-                    VStack(spacing: DesignTokens.Spacing.md) {
+                    VStack(spacing: Theme.Spacing.md) {
                         SectionLabel("Account", icon: "lock.fill")
 
                         StyledCard {
@@ -184,34 +184,34 @@ struct AccountView: View {
                             } label: {
                                 HStack {
                                     Text("Uitloggen")
-                                        .foregroundColor(DesignTokens.Colors.tomato)
+                                        .foregroundColor(Theme.Colors.tomato)
                                     Spacer()
                                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                                        .foregroundColor(DesignTokens.Colors.tomato)
+                                        .foregroundColor(Theme.Colors.tomato)
                                 }
-                                .padding(.vertical, DesignTokens.Spacing.md)
+                                .padding(.vertical, Theme.Spacing.md)
                             }
                         }
-                        .padding(.horizontal, DesignTokens.Spacing.lg)
+                        .padding(.horizontal, Theme.Spacing.lg)
                     }
 
                     Spacer()
-                        .frame(height: DesignTokens.Spacing.xl)
+                        .frame(height: Theme.Spacing.xl)
                 }
             }
             .navigationTitle("Account")
             .navigationBarTitleDisplayMode(.inline)
-            .background(DesignTokens.Colors.background)
+            .background(Theme.Colors.background)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     NavigationLink(destination: NotificationInboxView()) {
                         ZStack(alignment: .topTrailing) {
                             Image(systemName: "bell.fill")
                                 .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(DesignTokens.Colors.text)
+                                .foregroundColor(Theme.Colors.text)
                             if notificationStore.unreadCount > 0 {
                                 Circle()
-                                    .fill(DesignTokens.Colors.tomato)
+                                    .fill(Theme.Colors.tomato)
                                     .frame(width: 9, height: 9)
                                     .offset(x: 5, y: -4)
                             }
@@ -237,10 +237,10 @@ private extension View {
             .padding(.horizontal, 10)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(DesignTokens.Colors.surface2.opacity(0.55))
+                    .fill(Theme.Colors.surface2.opacity(0.55))
                     .overlay(
                         RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(DesignTokens.Colors.cream.opacity(isActive ? 0.7 : 0), lineWidth: 1.2)
+                            .stroke(Theme.Colors.cream.opacity(isActive ? 0.7 : 0), lineWidth: 1.2)
                     )
             )
             .animation(.easeInOut(duration: 0.15), value: isActive)
