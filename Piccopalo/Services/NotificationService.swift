@@ -20,6 +20,7 @@ class NotificationService: NSObject {
     
     override init() {
         super.init()
+        UNUserNotificationCenter.current().delegate = self
         loadStepsGoal()
     }
     
@@ -86,6 +87,13 @@ class NotificationService: NSObject {
             // No notification needed (≥ 60%)
             return
         }
+
+        let inboxIdentifier = "dailyReminder13:00"
+        NotificationStore.shared.addOrUpdate(
+            identifier: inboxIdentifier,
+            title: "Stappen vandaag",
+            body: message
+        )
         
         // Schedule notification for 13:00 daily
         var dateComponents = DateComponents()
@@ -99,7 +107,7 @@ class NotificationService: NSObject {
         content.badge = NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
-        let request = UNNotificationRequest(identifier: "dailyReminder13:00", content: content, trigger: trigger)
+        let request = UNNotificationRequest(identifier: inboxIdentifier, content: content, trigger: trigger)
         
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
@@ -164,11 +172,19 @@ class NotificationService: NSObject {
                 default:
                     message = "Goed bezig met je stappendoel!"
                 }
+
+                let inboxIdentifier = "threshold-\(threshold)-\(dateKeyForToday())"
+                NotificationStore.shared.addOrUpdate(
+                    identifier: inboxIdentifier,
+                    title: "Stappendoel: \(threshold)%",
+                    body: message
+                )
                 
                 sendNotification(
                     title: "Stappendoel: \(threshold)%",
                     body: message,
-                    badge: NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1)
+                    badge: NSNumber(value: UIApplication.shared.applicationIconBadgeNumber + 1),
+                    identifier: inboxIdentifier
                 )
             }
         }
@@ -223,16 +239,15 @@ class NotificationService: NSObject {
         return formatter.string(from: Date())
     }
     
-    private func sendNotification(title: String, body: String, badge: NSNumber) {
-        NotificationStore.shared.add(title: title, body: body)
-
+    private func sendNotification(title: String, body: String, badge: NSNumber, identifier: String? = nil) {
+        let requestIdentifier = identifier ?? UUID().uuidString
         let content = UNMutableNotificationContent()
         content.title = title
         content.body = body
         content.sound = .default
         content.badge = badge
         
-        let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false))
+        let request = UNNotificationRequest(identifier: requestIdentifier, content: content, trigger: UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false))
         UNUserNotificationCenter.current().add(request) { error in
             if let error = error {
                 print("Failed to send notification: \(error.localizedDescription)")
@@ -245,5 +260,40 @@ class NotificationService: NSObject {
         if stepsGoal == 0 {
             stepsGoal = 10000
         }
+    }
+}
+
+extension NotificationService: UNUserNotificationCenterDelegate {
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        Task { @MainActor in
+            NotificationStore.shared.addOrUpdate(
+                identifier: notification.request.identifier,
+                title: notification.request.content.title,
+                body: notification.request.content.body
+            )
+        }
+
+        completionHandler([.banner, .sound, .badge])
+    }
+
+    nonisolated func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
+        Task { @MainActor in
+            NotificationStore.shared.addOrUpdate(
+                identifier: response.notification.request.identifier,
+                title: response.notification.request.content.title,
+                body: response.notification.request.content.body,
+                isRead: true
+            )
+        }
+
+        completionHandler()
     }
 }

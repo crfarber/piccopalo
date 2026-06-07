@@ -63,7 +63,7 @@ struct VerticalProgressBar: View {
     }
 
     private var statusFillColor: Color {
-        clamped >= 100 ? Theme.Colors.green : g.Colors.creamDeep
+        clamped >= 100 ? Theme.Colors.green : Theme.Colors.creamDeep
     }
 
     private var defaultTrack: Color {

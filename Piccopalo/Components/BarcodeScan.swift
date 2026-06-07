@@ -1,6 +1,6 @@
 import SwiftUI
 
-private struct ScanErrorView: View {
+struct ScanErrorView: View {
     let message: String
     let allowsManualEntry: Bool
     let onRetry: () -> Void
@@ -23,17 +23,25 @@ private struct ScanErrorView: View {
                 VStack(spacing: Theme.Spacing.md) {
                     PrimaryButton(title: "Probeer opnieuw", icon: "arrow.clockwise", action: onRetry, color: Theme.Colors.green)
                     if allowsManualEntry {
-                        Button(action: onManualEntry) {
-                            Text("Vul handmatig in")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(Theme.Colors.accent)
-                        }
+                        AppButton(
+                            title: "Vul handmatig in",
+                            icon: nil,
+                            size: .fullWidth,
+                            background: Theme.Colors.surface2,
+                            foreground: Theme.Colors.accent,
+                            cornerStyle: .rounded(Theme.Radius.md),
+                            action: onManualEntry
+                        )
                     }
-                    Button(action: onCancel) {
-                        Text("Annuleer")
-                            .font(.system(size: 15, weight: .semibold))
-                            .foregroundColor(Theme.Colors.textMuted)
-                    }
+                    AppButton(
+                        title: "Annuleer",
+                        icon: nil,
+                        size: .fullWidth,
+                        background: Theme.Colors.surface2,
+                        foreground: Theme.Colors.textMuted,
+                        cornerStyle: .rounded(Theme.Radius.md),
+                        action: onCancel
+                    )
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
 
@@ -48,7 +56,7 @@ private struct ScanErrorView: View {
     }
 }
 
-private struct ScanLoadingView: View {
+struct ScanLoadingView: View {
     let onCancel: () -> Void
 
     var body: some View {
@@ -69,11 +77,16 @@ private struct ScanLoadingView: View {
                 }
                 .padding(.horizontal, Theme.Spacing.lg)
 
-                Button(action: onCancel) {
-                    Text("Annuleer")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(Theme.Colors.textMuted)
-                }
+                AppButton(
+                    title: "Annuleer",
+                    icon: nil,
+                    size: .fullWidth,
+                    background: Theme.Colors.surface2,
+                    foreground: Theme.Colors.textMuted,
+                    cornerStyle: .rounded(Theme.Radius.md),
+                    action: onCancel
+                )
+                .padding(.horizontal, Theme.Spacing.lg)
 
                 Spacer()
             }

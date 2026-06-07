@@ -1,21 +1,13 @@
 import SwiftUI
 
 struct TextInput: View {
-    /// Welk toetsenbord tonen — kies wat past bij je data (String / Int / Double / …).
     enum KeyboardKind {
-        /// Algemene tekst
         case text
-        /// Alleen ASCII
         case ascii
-        /// Gehele getallen — geen decimaal
         case integer
-        /// Kommagetallen
         case decimal
-        /// Telefoon
         case phone
-        /// E-mail
         case email
-        /// URL
         case url
     }
 
@@ -23,8 +15,14 @@ struct TextInput: View {
     @Binding var text: String
     var placeholder: String = ""
     var placeholderColor: Color = Theme.Colors.textDim
-    let unit: String?
+    var unit: String? = nil
     var keyboard: KeyboardKind = .text
+    var isSecure: Bool = false
+    var textAlignment: TextAlignment = .leading
+    var textInputAutocapitalization: TextInputAutocapitalization? = nil
+    var disableAutocorrection: Bool? = nil
+    var submitLabel: SubmitLabel? = nil
+    var onSubmit: (() -> Void)? = nil
     /// Optioneel: koppel aan `@FocusState` in de parent om het keyboard te sluiten (bijv. bij tik buiten het veld).
     var fieldFocus: FocusState<Bool>.Binding?
     @FocusState private var isLocallyFocused: Bool
@@ -45,20 +43,37 @@ struct TextInput: View {
 
             HStack(alignment: .center, spacing: Theme.Spacing.md) {
                 Group {
-                    if placeholder.isEmpty {
-                        TextField("", text: $text)
+                    if isSecure {
+                        if placeholder.isEmpty {
+                            SecureField("", text: $text)
+                        } else {
+                            SecureField("", text: $text, prompt:
+                                Text(placeholder)
+                                    .font(fieldFont)
+                                    .foregroundStyle(placeholderColor)
+                            )
+                        }
                     } else {
-                        TextField("", text: $text, prompt:
-                            Text(placeholder)
-                                .font(fieldFont)
-                                .foregroundStyle(placeholderColor)
-                        )
+                        if placeholder.isEmpty {
+                            TextField("", text: $text)
+                        } else {
+                            TextField("", text: $text, prompt:
+                                Text(placeholder)
+                                    .font(fieldFont)
+                                    .foregroundStyle(placeholderColor)
+                            )
+                        }
                     }
                 }
                     .optionalFocused(fieldFocus, fallback: $isLocallyFocused)
                     .textInputKeyboard(keyboard)
+                    .optionalTextInputAutocapitalization(textInputAutocapitalization)
+                    .optionalAutocorrectionDisabled(disableAutocorrection)
+                    .optionalSubmitLabel(submitLabel)
+                    .optionalOnSubmit(onSubmit)
                     .font(fieldFont)
                     .foregroundStyle(Theme.Colors.text)
+                    .multilineTextAlignment(textAlignment)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)
                     .background(
@@ -102,6 +117,42 @@ private extension View {
         case .phone:   self.keyboardType(.phonePad)
         case .email:   self.keyboardType(.emailAddress)
         case .url:     self.keyboardType(.URL)
+        }
+    }
+
+    @ViewBuilder
+    func optionalTextInputAutocapitalization(_ value: TextInputAutocapitalization?) -> some View {
+        if let value {
+            self.textInputAutocapitalization(value)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func optionalAutocorrectionDisabled(_ value: Bool?) -> some View {
+        if let value {
+            self.autocorrectionDisabled(value)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func optionalSubmitLabel(_ label: SubmitLabel?) -> some View {
+        if let label {
+            self.submitLabel(label)
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func optionalOnSubmit(_ action: (() -> Void)?) -> some View {
+        if let action {
+            self.onSubmit(action)
+        } else {
+            self
         }
     }
 }

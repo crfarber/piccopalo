@@ -84,11 +84,15 @@ struct ScanResultView: View {
                             onConfirm(portionValue)
                         }, color: Theme.Colors.green, isDisabled: portionValue <= 0)
 
-                        Button(action: onCancel) {
-                            Text("Annuleer")
-                                .font(.system(size: 15, weight: .semibold))
-                                .foregroundColor(Theme.Colors.textMuted)
-                        }
+                        AppButton(
+                            title: "Annuleer",
+                            icon: nil,
+                            size: .fullWidth,
+                            background: Theme.Colors.surface2,
+                            foreground: Theme.Colors.textMuted,
+                            cornerStyle: .rounded(Theme.Radius.md),
+                            action: onCancel
+                        )
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
                 }

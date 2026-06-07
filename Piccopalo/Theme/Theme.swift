@@ -17,6 +17,7 @@ struct Theme {
         static let cream = Color(red: 0.956, green: 0.894, blue: 0.659)  // #F4E4A8
         static let creamDeep = Color(red: 0.910, green: 0.824, blue: 0.473)  // #E8D279
         static let green = Color(red: 0.608, green: 0.820, blue: 0.455)  // #9BD174
+        static let blue = Color(red: 0.267, green: 0.627, blue: 0.933)  // #4400EE (water tracking)
         static let tomato = Color(red: 0.910, green: 0.482, blue: 0.361)  // #E87B5C
 
         // Jar layers

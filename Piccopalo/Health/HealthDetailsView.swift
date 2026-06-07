@@ -37,31 +37,33 @@ struct HealthDetailsView: View {
                                 .foregroundColor(Theme.Colors.textMuted)
                                 .multilineTextAlignment(.center)
 
-                            Button(action: {
-                                Task {
-                                    await healthManager.requestAuthorization()
+                            AppButton(
+                                title: "Geef Toestemming",
+                                icon: nil,
+                                size: .fullWidth,
+                                background: Theme.Colors.accent,
+                                foreground: .white,
+                                cornerStyle: .rounded(8),
+                                action: {
+                                    Task {
+                                        await healthManager.requestAuthorization()
+                                    }
                                 }
-                            }) {
-                                Text("Geef Toestemming")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, Theme.Spacing.md)
-                                    .background(Theme.Colors.accent)
-                                    .cornerRadius(8)
-                            }
+                            )
 
-                            Button {
-                                Task {
-                                    await refreshHealthData()
+                            AppButton(
+                                title: "Ververs gegevens",
+                                icon: nil,
+                                size: .fullWidth,
+                                background: Theme.Colors.surface2,
+                                foreground: Theme.Colors.accent,
+                                cornerStyle: .rounded(8),
+                                action: {
+                                    Task {
+                                        await refreshHealthData()
+                                    }
                                 }
-                            } label: {
-                                Text("Ververs gegevens")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Theme.Colors.accent)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, Theme.Spacing.sm)
-                            }
+                            )
 
                             Button {
                                 if let healthURL = URL(string: "x-apple-health://") {
@@ -114,19 +116,19 @@ struct HealthDetailsView: View {
                                     .foregroundColor(Theme.Colors.textMuted)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                 
-                                Button(action: {
-                                    accountViewModel.activityFactor = healthManager.calculateActivityFactor()
-                                    accountViewModel.saveAccount()
-                                    dismiss()
-                                }) {
-                                    Text("Overnemen")
-                                        .font(.system(size: 14, weight: .semibold))
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity)
-                                        .padding(.vertical, Theme.Spacing.md)
-                                        .background(Theme.Colors.accent)
-                                        .cornerRadius(8)
-                                }
+                                AppButton(
+                                    title: "Overnemen",
+                                    icon: nil,
+                                    size: .fullWidth,
+                                    background: Theme.Colors.accent,
+                                    foreground: .white,
+                                    cornerStyle: .rounded(8),
+                                    action: {
+                                        accountViewModel.activityFactor = healthManager.calculateActivityFactor()
+                                        accountViewModel.saveAccount()
+                                        dismiss()
+                                    }
+                                )
                             }
                         }
                         .padding(.horizontal, Theme.Spacing.lg)

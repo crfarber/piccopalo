@@ -2,7 +2,16 @@ import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var viewModel: ProteinViewModel
+    @EnvironmentObject var accountViewModel: AccountViewModel
     @State private var records: [DayRecord] = []
+
+    private var userName: String {
+        accountViewModel.name.isEmpty ? "jou" : accountViewModel.name
+    }
+
+    private var userInitial: String {
+        String(userName.prefix(1)).uppercased()
+    }
 
     private var recordsByDate: [String: DayRecord] {
         Dictionary(uniqueKeysWithValues: records.map { ($0.date, $0) })
@@ -17,57 +26,55 @@ struct HistoryView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    header
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                header
 
-                    weekStrip
-                        .padding(.top, Theme.Spacing.lg)
-                        .padding(.bottom, Theme.Spacing.md)
+                weekStrip
+                    .padding(.top, Theme.Spacing.lg)
+                    .padding(.bottom, Theme.Spacing.md)
 
-                    if records.isEmpty {
-                        emptyState
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, Theme.Spacing.xxl)
-                    } else {
-                        StyledCard {
-                            VStack(alignment: .leading, spacing: 0) {
-                                Text("Alle dagen")
-                                    .font(.system(size: 13, weight: .semibold))
-                                    .tracking(0.4)
-                                    .textCase(.uppercase)
-                                    .foregroundStyle(Theme.Colors.textMuted)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.bottom, Theme.Spacing.md)
+                if records.isEmpty {
+                    emptyState
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, Theme.Spacing.xxl)
+                } else {
+                    StyledCard {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Text("Alle dagen")
+                                .font(.system(size: 13, weight: .semibold))
+                                .tracking(0.4)
+                                .textCase(.uppercase)
+                                .foregroundStyle(Theme.Colors.textMuted)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.bottom, Theme.Spacing.md)
 
-                                ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
-                                    NavigationLink(destination: DayDetailView(record: record)) {
-                                        HistoryRowView(record: record)
-                                    }
-                                    .buttonStyle(.plain)
+                            ForEach(Array(records.enumerated()), id: \.element.id) { index, record in
+                                NavigationLink(destination: DayDetailView(record: record)) {
+                                    HistoryRowView(record: record)
+                                }
+                                .buttonStyle(.plain)
 
-                                    if index < records.count - 1 {
-                                        Divider()
-                                            .background(Color.white.opacity(0.08))
-                                    }
+                                if index < records.count - 1 {
+                                    Divider()
+                                        .background(Color.white.opacity(0.08))
                                 }
                             }
                         }
                     }
                 }
-                .padding(.horizontal, Theme.Spacing.lg)
-                .padding(.bottom, Theme.Spacing.xxl)
             }
-            .scrollDismissesKeyboard(.immediately)
-            .background(Theme.Colors.background)
-            .navigationBarHidden(true)
-            .task {
-                await reloadRecords()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .piccopaloAccountDidChange)) { _ in
-                Task { await reloadRecords() }
-            }
+            .padding(.horizontal, Theme.Spacing.lg)
+            .padding(.bottom, Theme.Spacing.xxl)
+        }
+        .scrollDismissesKeyboard(.immediately)
+        .background(Theme.Colors.background)
+        .navigationBarHidden(true)
+        .task {
+            await reloadRecords()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .piccopaloAccountDidChange)) { _ in
+            Task { await reloadRecords() }
         }
     }
 
@@ -85,12 +92,17 @@ struct HistoryView: View {
 
             Spacer()
 
-            Button(action: {}) {
-                Image(systemName: "calendar")
-                    .font(.system(size: 20, weight: .medium))
-                    .foregroundStyle(Theme.Colors.text)
+            NavigationLink(destination: AccountView()) {
+                ZStack {
+                    Circle()
+                        .fill(Theme.Colors.surface2)
+                        .frame(width: 42, height: 42)
+                    Text(userInitial)
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(Theme.Colors.text)
+                }
             }
-            .accessibilityLabel("Kalender")
+            .accessibilityLabel("Account")
         }
         .padding(.top, Theme.Spacing.md)
     }

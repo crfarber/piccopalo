@@ -48,7 +48,8 @@ class AccountViewModel: ObservableObject {
             name: name,
             weight: Double(weight) ?? 0,
             height: Double(height) ?? 0,
-            activityFactor: activityFactor
+            activityFactor: activityFactor,
+            waterGoalMl: 0
         )
         Task {
             await userProfileRepository.saveAccount(data)
@@ -73,4 +74,5 @@ struct AccountData: Codable {
     let weight: Double
     let height: Double
     let activityFactor: Double
+    let waterGoalMl: Int?
 }

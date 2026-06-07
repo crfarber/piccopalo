@@ -5,7 +5,8 @@ struct PiccopaloApp: App {
     @Environment(\.scenePhase) private var scenePhase
     @StateObject private var proteinViewModel = ProteinViewModel(
         diaryRepository: SupabaseDiaryRepository(),
-        userProfileRepository: SupabaseUserProfileRepository()
+        userProfileRepository: SupabaseUserProfileRepository(),
+        waterRepository: SupabaseWaterRepository()
     )
 
     @StateObject private var accountViewModel = AccountViewModel(
@@ -55,7 +56,8 @@ struct PiccopaloApp: App {
     ContentView()
         .environmentObject(ProteinViewModel(
             diaryRepository: SupabaseDiaryRepository(),
-            userProfileRepository: SupabaseUserProfileRepository()
+            userProfileRepository: SupabaseUserProfileRepository(),
+            waterRepository: SupabaseWaterRepository()
         ))
         .environmentObject(AccountViewModel(
             userProfileRepository: SupabaseUserProfileRepository()

@@ -3,13 +3,22 @@ import Combine
 
 struct NotificationItem: Codable, Identifiable {
     let id: UUID
+    let sourceIdentifier: String?
     let title: String
     let body: String
     let date: Date
     var isRead: Bool
 
-    init(id: UUID = UUID(), title: String, body: String, date: Date = Date(), isRead: Bool = false) {
+    init(
+        id: UUID = UUID(),
+        sourceIdentifier: String? = nil,
+        title: String,
+        body: String,
+        date: Date = Date(),
+        isRead: Bool = false
+    ) {
         self.id = id
+        self.sourceIdentifier = sourceIdentifier
         self.title = title
         self.body = body
         self.date = date
@@ -33,13 +42,47 @@ final class NotificationStore: ObservableObject {
     }
 
     func add(title: String, body: String) {
-        let item = NotificationItem(title: title, body: body)
-        notifications.insert(item, at: 0)
+        addOrUpdate(identifier: nil, title: title, body: body)
+    }
+
+    func addOrUpdate(identifier: String?, title: String, body: String, date: Date = Date(), isRead: Bool = false) {
+        if let identifier,
+           let index = notifications.firstIndex(where: { $0.sourceIdentifier == identifier }) {
+            let existing = notifications.remove(at: index)
+            notifications.insert(
+                NotificationItem(
+                    id: existing.id,
+                    sourceIdentifier: identifier,
+                    title: title,
+                    body: body,
+                    date: date,
+                    isRead: existing.isRead || isRead
+                ),
+                at: 0
+            )
+        } else {
+            notifications.insert(
+                NotificationItem(
+                    sourceIdentifier: identifier,
+                    title: title,
+                    body: body,
+                    date: date,
+                    isRead: isRead
+                ),
+                at: 0
+            )
+        }
         persist()
     }
 
     func markRead(_ id: UUID) {
         guard let index = notifications.firstIndex(where: { $0.id == id }) else { return }
+        notifications[index].isRead = true
+        persist()
+    }
+
+    func markReadBySourceIdentifier(_ identifier: String) {
+        guard let index = notifications.firstIndex(where: { $0.sourceIdentifier == identifier }) else { return }
         notifications[index].isRead = true
         persist()
     }

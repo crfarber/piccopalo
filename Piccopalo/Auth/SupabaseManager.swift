@@ -10,7 +10,12 @@ final class SupabaseManager {
     private init() {
         client = SupabaseClient(
             supabaseURL: URL(string: "https://wzqyrupndkbcoluslejm.supabase.co")!,
-            supabaseKey: "sb_publishable_bhYF0Z8FDJx5Nd8WBXjdUg_AYBEeu_x"
+            supabaseKey: "sb_publishable_bhYF0Z8FDJx5Nd8WBXjdUg_AYBEeu_x",
+            options: SupabaseClientOptions(
+                auth: SupabaseClientOptions.AuthOptions(
+                    emitLocalSessionAsInitialSession: true
+                )
+            )
         )
     }
 }

@@ -30,18 +30,26 @@ struct LoginView: View {
 
                 // Formulier
                 VStack(spacing: Theme.Spacing.md) {
-                    inputField(
+                    TextInput(
                         label: "E-mailadres",
                         text: $email,
-                        keyboard: .emailAddress,
-                        isSecure: false
+                        placeholder: "naam@voorbeeld.nl",
+                        keyboard: .email,
+                        isSecure: false,
+                        textInputAutocapitalization: .never,
+                        disableAutocorrection: true,
+                        submitLabel: .next
                     )
 
-                    inputField(
+                    TextInput(
                         label: "Wachtwoord",
                         text: $password,
-                        keyboard: .default,
-                        isSecure: true
+                        placeholder: "Vul je wachtwoord in",
+                        keyboard: .ascii,
+                        isSecure: true,
+                        textInputAutocapitalization: .never,
+                        disableAutocorrection: true,
+                        submitLabel: .done
                     )
 
                     if let error = authViewModel.errorMessage {
@@ -94,41 +102,6 @@ struct LoginView: View {
                     .tint(Theme.Colors.cream)
                     .scaleEffect(1.4)
             }
-        }
-    }
-
-    // MARK: - Helpers
-
-    @ViewBuilder
-    private func inputField(
-        label: String,
-        text: Binding<String>,
-        keyboard: UIKeyboardType,
-        isSecure: Bool
-    ) -> some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xs) {
-            Text(label)
-                .font(.system(size: 13, weight: .medium))
-                .foregroundColor(Theme.Colors.textMuted)
-
-            Group {
-                if isSecure {
-                    SecureField("", text: text)
-                } else {
-                    TextField("", text: text)
-                        .keyboardType(keyboard)
-                        .textInputAutocapitalization(.never)
-                        .autocorrectionDisabled()
-                }
-            }
-            .padding(Theme.Spacing.lg)
-            .background(Theme.Colors.surface)
-            .foregroundColor(Theme.Colors.text)
-            .cornerRadius(Theme.Radius.md)
-            .overlay(
-                RoundedRectangle(cornerRadius: Theme.Radius.md)
-                    .stroke(Color.white.opacity(0.08), lineWidth: 1)
-            )
         }
     }
 }

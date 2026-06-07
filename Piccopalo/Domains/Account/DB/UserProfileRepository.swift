@@ -33,6 +33,7 @@ private struct SupabaseProfileRow: Codable {
     let weight: Double
     let height: Double
     let activityFactor: Double
+    let waterGoalMl: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -40,6 +41,7 @@ private struct SupabaseProfileRow: Codable {
         case weight
         case height
         case activityFactor = "activity_factor"
+        case waterGoalMl = "water_goal_ml"
     }
 
     init(from data: AccountData, userId: String) {
@@ -48,9 +50,10 @@ private struct SupabaseProfileRow: Codable {
         self.weight = data.weight
         self.height = data.height
         self.activityFactor = data.activityFactor
+        self.waterGoalMl = data.waterGoalMl
     }
 
     func toAccountData() -> AccountData {
-        AccountData(name: name, weight: weight, height: height, activityFactor: activityFactor)
+        AccountData(name: name, weight: weight, height: height, activityFactor: activityFactor, waterGoalMl: waterGoalMl)
     }
 }

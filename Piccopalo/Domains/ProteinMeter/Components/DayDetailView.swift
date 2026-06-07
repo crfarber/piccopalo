@@ -247,15 +247,15 @@ struct DayDetailView: View {
                         )
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                        Button(action: saveManualGrams) {
-                            Text("Opslaan")
-                                .fontWeight(.semibold)
-                                .foregroundStyle(Color(red: 0.1, green: 0.1, blue: 0.1))
-                                .padding(.horizontal, Theme.Spacing.md)
-                                .padding(.vertical, Theme.Spacing.sm)
-                                .background(Theme.Colors.cream)
-                                .cornerRadius(Theme.Radius.md)
-                        }
+                        AppButton(
+                            title: "Opslaan",
+                            icon: nil,
+                            size: .medium,
+                            background: Theme.Colors.cream,
+                            foreground: Color(red: 0.1, green: 0.1, blue: 0.1),
+                            cornerStyle: .rounded(Theme.Radius.md),
+                            action: saveManualGrams
+                        )
                     }
                 }
             }

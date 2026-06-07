@@ -74,9 +74,22 @@
 		5BDA98152FB39EB300E8A89A /* piccopalo-watch Watch AppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "piccopalo-watch Watch AppUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		5B537BBA2FB4D70B000C9AEC /* Exceptions for "Piccopalo" folder in "Piccopalo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 5B9995BF2FA6071F007207CA /* Piccopalo */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5B9995C22FA60720007207CA /* Piccopalo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				5B537BBA2FB4D70B000C9AEC /* Exceptions for "Piccopalo" folder in "Piccopalo" target */,
+			);
 			path = Piccopalo;
 			sourceTree = "<group>";
 		};
@@ -648,7 +661,9 @@
 				DEVELOPMENT_TEAM = F3XV8UD895;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Piccopalo/Info.plist;
 				INFOPLIST_KEY_BGTaskSchedulerPermittedIdentifiers = com.piccopalo.stepcheck;
+				INFOPLIST_KEY_CFBundleDisplayName = Piccopalo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Piccopalo gebruikt je camera om barcodes te scannen.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Piccopalo leest je gezondheidsdata om je activiteitsniveau automatisch in te schatten.";
@@ -689,7 +704,9 @@
 				DEVELOPMENT_TEAM = F3XV8UD895;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Piccopalo/Info.plist;
 				INFOPLIST_KEY_BGTaskSchedulerPermittedIdentifiers = com.piccopalo.stepcheck;
+				INFOPLIST_KEY_CFBundleDisplayName = Piccopalo;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Piccopalo gebruikt je camera om barcodes te scannen.";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "Piccopalo leest je gezondheidsdata om je activiteitsniveau automatisch in te schatten.";

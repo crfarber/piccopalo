@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct NotificationInboxView: View {
+    @Environment(\.dismiss) private var dismiss
     @ObservedObject private var store = NotificationStore.shared
 
     var body: some View {
@@ -36,7 +37,17 @@ struct NotificationInboxView: View {
         .background(Theme.Colors.background)
         .navigationTitle("Meldingen")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(Theme.Colors.text)
+                }
+                .accessibilityLabel("Terug")
+            }
+
             if store.unreadCount > 0 {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Alles gelezen") {
