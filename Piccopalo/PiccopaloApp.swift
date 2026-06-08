@@ -20,6 +20,11 @@ struct PiccopaloApp: App {
         symptomRepository: SupabaseSymptomRepository()
     )
 
+    @StateObject private var fitnessViewModel = FitnessViewModel(
+        exerciseRepository: SupabaseExerciseRepository(),
+        workoutRepository: SupabaseWorkoutRepository()
+    )
+
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -28,6 +33,7 @@ struct PiccopaloApp: App {
                 .environmentObject(authViewModel)
                 .environmentObject(healthManager)
                 .environmentObject(healthViewModel)
+                .environmentObject(fitnessViewModel)
                 .onAppear {
                     initializeNotifications()
                     healthManager.startBackgroundStepMonitoringIfAuthorized()
@@ -72,6 +78,10 @@ struct PiccopaloApp: App {
         .environmentObject(HealthViewModel(
             bloodSugarRepository: SupabaseBloodSugarRepository(),
             symptomRepository: SupabaseSymptomRepository()
+        ))
+        .environmentObject(FitnessViewModel(
+            exerciseRepository: SupabaseExerciseRepository(),
+            workoutRepository: SupabaseWorkoutRepository()
         ))
 }
 

@@ -40,8 +40,11 @@ Je hebt de tabellen uit `schema/` al. Sla `schema/` over en draai **alleen** wat
 
 1. [`migrations/001-health-extension.sql`](migrations/001-health-extension.sql) — bloedsuiker, symptomen, GI-kolommen
 2. [`migrations/002-user-water-goal.sql`](migrations/002-user-water-goal.sql) — alleen als `water_goal_ml` nog ontbreekt
+3. [`migrations/003-fitness-tables.sql`](migrations/003-fitness-tables.sql) — oefeningen, schema's, sessies, sets
+4. [`migrations/004-exercise-library-import.sql`](migrations/004-exercise-library-import.sql) — import-kolommen + RPC (run na 003-fitness-tables)
+5. [`migrations/003-fitness-seed.sql`](migrations/003-fitness-seed.sql) — optioneel; app-import vervangt dit
 
-Zie [`migrations/README.md`](migrations/README.md) voor de stappen en log, en [`health.md`](health.md) voor de schema-uitleg.
+Zie [`migrations/README.md`](migrations/README.md) voor de stappen en log, en [`health.md`](health.md) / [`fitness.md`](fitness.md) voor de schema-uitleg.
 
 ## Conventies
 
@@ -61,5 +64,10 @@ Zie [`migrations/README.md`](migrations/README.md) voor de stappen en log, en [`
 | `water_entries` | `WaterEntry` |
 | `blood_sugar_entries` | `BloodSugarEntry` *(migratie 001)* |
 | `symptom_entries` | `SymptomEntry` *(migratie 001)* |
+| `exercises` | `Exercise` *(migratie 003)* |
+| `workout_templates` | `WorkoutTemplate` *(migratie 003)* |
+| `workout_template_exercises` | `WorkoutTemplateExercise` *(migratie 003)* |
+| `workout_sessions` | `WorkoutSession` *(migratie 003)* |
+| `workout_sets` | `WorkoutSet` *(migratie 003)* |
 
-Zie ook [database.md](database.md), [diary.md](diary.md), [user.md](user.md) en [health.md](health.md).
+Zie ook [database.md](database.md), [diary.md](diary.md), [user.md](user.md), [health.md](health.md) en [fitness.md](fitness.md).
