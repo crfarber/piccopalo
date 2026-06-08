@@ -26,6 +26,26 @@ struct ScanResultView: View {
         return (portionValue / 100) * product.proteinPer100g
     }
 
+    private var totalCarbs: Double? {
+        guard portionValue > 0, let carbs = product.carbsPer100g else { return nil }
+        return (portionValue / 100) * carbs
+    }
+
+    private var giBadge: some View {
+        let category = product.glycemicCategory
+        return HStack(spacing: 4) {
+            Text(category.emoji)
+                .font(.system(size: 12))
+            Text(category.label)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(category.color)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(category.color.opacity(0.14))
+        .clipShape(Capsule())
+    }
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -40,6 +60,16 @@ struct ScanResultView: View {
                             Text("\(String(format: "%.1f", product.proteinPer100g))g eiwit per 100g")
                                 .font(.system(size: 15))
                                 .foregroundColor(Theme.Colors.textMuted)
+
+                            HStack(spacing: Theme.Spacing.sm) {
+                                giBadge
+                                if let carbs = product.carbsPer100g {
+                                    Text("\(String(format: "%.0f", carbs))g KH/100g")
+                                        .font(.system(size: 13, weight: .medium))
+                                        .foregroundColor(Theme.Colors.textMuted)
+                                }
+                            }
+                            .padding(.top, Theme.Spacing.xs)
                         }
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
@@ -74,6 +104,30 @@ struct ScanResultView: View {
                                 Text("\(String(format: "%.2f", totalProtein))g eiwit")
                                     .font(.system(size: 22, weight: .semibold))
                                     .foregroundColor(Theme.Colors.green)
+                            }
+
+                            if let carbs = totalCarbs {
+                                HStack {
+                                    Text("Koolhydraten")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Theme.Colors.textMuted)
+                                    Spacer()
+                                    Text("\(String(format: "%.0f", carbs))g")
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(Theme.Colors.text)
+                                }
+                            }
+
+                            if let gl = product.glycemicLoad(forPortionGrams: portionValue) {
+                                HStack {
+                                    Text("Glycemische lading")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(Theme.Colors.textMuted)
+                                    Spacer()
+                                    Text(String(format: "%.0f", gl))
+                                        .font(.system(size: 15, weight: .semibold))
+                                        .foregroundColor(Theme.Colors.text)
+                                }
                             }
                         }
                     }

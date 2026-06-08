@@ -151,6 +151,11 @@ private struct SupabaseEntryRow: Codable {
     let proteinPer100: Double
     let proteinAmount: Double
     let createdAt: String
+    let carbsGrams: Double?
+    let fiberGrams: Double?
+    let fatGrams: Double?
+    let glycemicIndex: Int?
+    let glycemicLoad: Double?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -162,6 +167,11 @@ private struct SupabaseEntryRow: Codable {
         case proteinPer100 = "protein_per100"
         case proteinAmount = "protein_amount"
         case createdAt = "created_at"
+        case carbsGrams = "carbs_grams"
+        case fiberGrams = "fiber_grams"
+        case fatGrams = "fat_grams"
+        case glycemicIndex = "glycemic_index"
+        case glycemicLoad = "glycemic_load"
     }
 
     init(from entry: ProteinEntry, dateISO: String, userId: String) {
@@ -175,6 +185,11 @@ private struct SupabaseEntryRow: Codable {
         self.proteinAmount = entry.proteinAmount
         let fmt = ISO8601DateFormatter()
         self.createdAt = fmt.string(from: entry.createdAt)
+        self.carbsGrams = entry.carbsGrams
+        self.fiberGrams = entry.fiberGrams
+        self.fatGrams = entry.fatGrams
+        self.glycemicIndex = entry.glycemicIndex
+        self.glycemicLoad = entry.glycemicLoad
     }
 
     func toEntry() -> ProteinEntry {
@@ -186,7 +201,12 @@ private struct SupabaseEntryRow: Codable {
             unit: ProteinEntryUnit(rawValue: unit) ?? .grams,
             proteinPer100: proteinPer100,
             proteinAmount: proteinAmount,
-            createdAt: fmt.date(from: createdAt) ?? Date()
+            createdAt: fmt.date(from: createdAt) ?? Date(),
+            carbsGrams: carbsGrams,
+            fiberGrams: fiberGrams,
+            fatGrams: fatGrams,
+            glycemicIndex: glycemicIndex,
+            glycemicLoad: glycemicLoad
         )
     }
 }

@@ -34,8 +34,7 @@ Elke losse inname bevat:
 ## Waar wordt het gebruikt?
 
 - **Home / vandaag**: `ProteinViewModel` laadt en schrijft de record voor “vandaag” via `DiaryRepositoryProtocol`.
-- **Geschiedenis**: lijst en weekstrip lezen records via `ProteinViewModel.record(for:)` / `allRecords()` (gesorteerd op datum, nieuwste eerst).
-- **Dagdetail**: handmatig gram en activiteit per dag; persist via `ProteinViewModel.saveDayRecord(_:)`.
+- **Dag-tab**: weekstrip, dagoverzicht (eiwit, water, activiteit, stappen) en tijdlijn lezen records via `ProteinViewModel.record(for:)` / `allRecords()`. Activiteit per dag aanpasbaar via `ProteinViewModel.saveDayRecord(_:)`. Items verwijderen via swipe-to-delete op de tijdlijn.
 
 ## Opslag
 
@@ -47,7 +46,7 @@ Elke losse inname bevat:
 
 - **Eerste log van de dag**: `activityFactor` komt uit het **account** (default).
 - **Verdere logs diezelfde dag**: bestaande `activityFactor` van die dag blijft staan (niet opnieuw overschrijven bij elke +).
-- **Detailpagina**: gebruiker kan activiteit en grammen aanpassen; doel wordt opnieuw berekend o.b.v. gewicht × gekozen factor.
+- **Dag-tab**: gebruiker kan activiteit per dag aanpassen; doel wordt opnieuw berekend o.b.v. gewicht × gekozen factor.
 - **Food picker**: gebruiker voert hoeveelheid in (`g` of `ml`) en de app rekent automatisch:
 	- `proteinAmount = (quantity / 100) × proteinPer100`
 - **Dagtotaal**: `proteinConsumed` wordt opgebouwd vanuit losse entries en blijft als snapshot zichtbaar.

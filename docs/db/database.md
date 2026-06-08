@@ -36,13 +36,20 @@ Supabase is de bron van waarheid voor alle gebruikersdata. De app gebruikt:
 
 ### Tabellen
 
-De data wordt logisch verdeeld over drie tabellen:
+SQL-bestanden staan in [`docs/db/schema/`](schema/) (basis) en [`docs/db/migrations/`](migrations/) (nieuwe wijzigingen). Zie [`docs/db/README.md`](README.md) voor apply-volgorde.
 
-- **`user_profiles`**: één profiel per gebruiker.
-- **`diary_days`**: één record per gebruiker per datum.
-- **`diary_entries`**: losse inname-entries per dag.
+**Basis (productie):**
 
-De relationele sleutel is steeds de ingelogde Supabase-gebruiker via `auth.users.id`.
+| Tabel | Rol |
+|-------|-----|
+| `user_profiles` | Profiel per gebruiker (`id` = `auth.users.id`) |
+| `diary_days` | Dagtotaal eiwit per `date_iso` |
+| `diary_entries` | Losse eiwit-innames |
+| `water_entries` | Losse water-innames (ml) |
+
+**Via migratie 001 (Health uitbreiding):** `blood_sugar_entries`, `symptom_entries`, plus GI-kolommen op `diary_entries`.
+
+De relationele sleutel is steeds de ingelogde Supabase-gebruiker via `auth.users.id` (behalve `user_profiles.id`).
 
 ### RLS
 
@@ -53,6 +60,9 @@ Basisregel:
 - `user_profiles.id = auth.uid()`
 - `diary_days.user_id = auth.uid()`
 - `diary_entries.user_id = auth.uid()`
+- `water_entries.user_id = auth.uid()`
+
+Policies staan in [`schema/05-rls-base.sql`](schema/05-rls-base.sql) en per migratie voor nieuwe tabellen.
 
 Dat betekent dat elke query automatisch afgekapt wordt tot de huidige gebruiker.
 
@@ -95,8 +105,12 @@ Heel oude profieldata kan onder UserDefaults-key **`account`** (`UserModel` via 
 
 ## Gerelateerde documenten
 
+- [README.md](README.md) — schema-map, apply-volgorde, conventies  
+- [schema/](schema/) — SQL voor bestaande tabellen  
+- [migrations/](migrations/) — incrementele wijzigingen  
 - [diary.md](diary.md) — dagboek / eiwit per dag  
 - [user.md](user.md) — gebruikersprofiel / account  
+- [health.md](health.md) — bloedsuiker, symptomen & glycemische index  
 
 ## Onderhoud
 

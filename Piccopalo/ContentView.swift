@@ -12,9 +12,14 @@ struct ContentView: View {
                             Label("Vandaag", systemImage: "house.fill")
                         }
 
-                    HistoryView()
+                    DayTimelineView()
                         .tabItem {
-                            Label("Historie", systemImage: "calendar")
+                            Label("Dag", systemImage: "list.bullet.rectangle")
+                        }
+
+                    WeeklyInsightsView()
+                        .tabItem {
+                            Label("Inzichten", systemImage: "chart.line.uptrend.xyaxis")
                         }
                 }
                 .tint(.green)

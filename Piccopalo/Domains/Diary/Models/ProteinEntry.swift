@@ -18,6 +18,13 @@ struct ProteinEntry: Codable, Identifiable, Hashable {
     let proteinAmount: Double
     let createdAt: Date
 
+    // Glycemische / voedingsdata (optioneel, alleen gevuld via barcode scan).
+    let carbsGrams: Double?
+    let fiberGrams: Double?
+    let fatGrams: Double?
+    let glycemicIndex: Int?
+    let glycemicLoad: Double?
+
     init(
         id: UUID = UUID(),
         sourceName: String,
@@ -25,7 +32,12 @@ struct ProteinEntry: Codable, Identifiable, Hashable {
         unit: ProteinEntryUnit,
         proteinPer100: Double,
         proteinAmount: Double,
-        createdAt: Date = Date()
+        createdAt: Date = Date(),
+        carbsGrams: Double? = nil,
+        fiberGrams: Double? = nil,
+        fatGrams: Double? = nil,
+        glycemicIndex: Int? = nil,
+        glycemicLoad: Double? = nil
     ) {
         self.id = id
         self.sourceName = sourceName
@@ -34,5 +46,14 @@ struct ProteinEntry: Codable, Identifiable, Hashable {
         self.proteinPer100 = proteinPer100
         self.proteinAmount = proteinAmount
         self.createdAt = createdAt
+        self.carbsGrams = carbsGrams
+        self.fiberGrams = fiberGrams
+        self.fatGrams = fatGrams
+        self.glycemicIndex = glycemicIndex
+        self.glycemicLoad = glycemicLoad
+    }
+
+    var glycemicCategory: GICategory {
+        GICategory(glycemicIndex: glycemicIndex)
     }
 }

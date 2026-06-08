@@ -2,7 +2,6 @@ import SwiftUI
 
 struct AccountView: View {
     @EnvironmentObject var accountViewModel: AccountViewModel
-    @EnvironmentObject var proteinViewModel: ProteinViewModel
     @EnvironmentObject var authViewModel: AuthViewModel
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var notificationStore = NotificationStore.shared
@@ -35,45 +34,9 @@ struct AccountView: View {
                     Text(accountViewModel.name)
                         .font(.system(size: 26, weight: .semibold))
                         .foregroundColor(Theme.Colors.text)
-
-                    Text("Daily goal: \(String(format: "%.0f", accountViewModel.dailyProteinGoal))g")
-                        .font(.system(size: 13))
-                        .foregroundColor(Theme.Colors.textMuted)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.bottom, Theme.Spacing.xxl)
-
-                // Protein goal card
-                StyledCard {
-                    HStack(alignment: .center, spacing: Theme.Spacing.md) {
-                        ProgressBarMini(percentage: proteinViewModel.percentage)
-                            .frame(width: 42, height: 60)
-
-                        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
-                            Text("Eiwitdoel")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(Theme.Colors.textMuted)
-                                .tracking(0.4)
-                                .textCase(.uppercase)
-
-                            HStack(spacing: 4) {
-                                Text(String(format: "%.0f", accountViewModel.dailyProteinGoal))
-                                    .font(.system(size: 22, weight: .semibold))
-                                    .foregroundStyle(Theme.Colors.text)
-                                Text("g/dag")
-                                    .font(.system(size: 14, weight: .semibold))
-                                    .foregroundColor(Theme.Colors.textMuted)
-                            }
-                        }
-
-                        Spacer(minLength: 0)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, Theme.Spacing.lg)
-                .padding(.bottom, Theme.Spacing.xl)
-
 
                 // Your data section
                 VStack(spacing: Theme.Spacing.md) {
@@ -121,65 +84,53 @@ struct AccountView: View {
                     .padding(.horizontal, Theme.Spacing.lg)
                 }
 
-                // Activity section
+                // Health section
                 VStack(spacing: Theme.Spacing.md) {
-
-                    SectionLabel("Activiteit", icon: "dumbbell.fill")
-                    NavigationLink(destination: HealthDetailsView()) {
-                        HStack {
-                            Image(systemName: "heart.fill")
-                                .foregroundColor(Theme.Colors.accent)
-
-                            Text("Gezondheidsgegevens")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(Theme.Colors.accent)
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundColor(Theme.Colors.textMuted)
-                        }
-                        .padding(.horizontal, Theme.Spacing.lg)
-                        .padding(.vertical, Theme.Spacing.md)
-                    }
+                    SectionLabel("Gezondheid", icon: "heart.fill")
 
                     StyledCard {
-                        FormMenuRow(
-                            title: "Activiteit",
-                            selectionText: accountViewModel.activityOptions
-                                .first(where: { $0.factor == accountViewModel.activityFactor })?.label ?? "",
-                            options: accountViewModel.activityOptions,
-                            id: \.factor,
-                            optionLabel: { $0.label },
-                            onSelect: { option in
-                                accountViewModel.activityFactor = option.factor
-                            }
-                        )
-                    }
-                    .padding(.horizontal, Theme.Spacing.lg)
-                }
-
-                // Uitloggen
-                VStack(spacing: Theme.Spacing.md) {
-                    SectionLabel("Account", icon: "lock.fill")
-
-                    StyledCard {
-                        Button {
-                            Task { await authViewModel.signOut() }
-                        } label: {
+                        NavigationLink(destination: HealthDetailsView()) {
                             HStack {
-                                Text("Uitloggen")
-                                    .foregroundColor(Theme.Colors.tomato)
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(Theme.Colors.accent)
+
+                                Text("Gezondheidsgegevens")
+                                    .font(.system(size: 15, weight: .semibold))
+                                    .foregroundColor(Theme.Colors.text)
+
                                 Spacer()
-                                Image(systemName: "rectangle.portrait.and.arrow.right")
-                                    .foregroundColor(Theme.Colors.tomato)
+
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 12, weight: .semibold))
+                                    .foregroundColor(Theme.Colors.textMuted)
                             }
                             .padding(.vertical, Theme.Spacing.md)
                         }
+                        .buttonStyle(.plain)
                     }
                     .padding(.horizontal, Theme.Spacing.lg)
                 }
+                .padding(.top, Theme.Spacing.xl)
+
+                // Logout
+                StyledCard {
+                    Button {
+                        Task { await authViewModel.signOut() }
+                    } label: {
+                        HStack {
+                            Text("Uitloggen")
+                                .font(.system(size: 15, weight: .semibold))
+                                .foregroundColor(Theme.Colors.tomato)
+                            Spacer()
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .foregroundColor(Theme.Colors.tomato)
+                        }
+                        .padding(.vertical, Theme.Spacing.md)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, Theme.Spacing.lg)
+                .padding(.top, Theme.Spacing.xl)
 
                 Spacer()
                     .frame(height: Theme.Spacing.xl)
@@ -201,29 +152,33 @@ struct AccountView: View {
 
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(destination: NotificationInboxView()) {
-                    ZStack(alignment: .topTrailing) {
-                        Circle()
-                            .fill(Theme.Colors.surface2)
-                            .frame(width: 42, height: 42)
-
-                        Image(systemName: "bell.fill")
-                            .font(.system(size: 17, weight: .semibold))
-                            .foregroundColor(Theme.Colors.text)
-
-                        if notificationStore.unreadCount > 0 {
-                            Circle()
-                                .fill(Theme.Colors.tomato)
-                                .frame(width: 9, height: 9)
-                                .offset(x: 4, y: -4)
-                        }
-                    }
+                    notificationBellButton
                 }
+                .buttonStyle(.plain)
             }
         }
         .onChange(of: accountViewModel.name) { accountViewModel.saveAccount() }
         .onChange(of: accountViewModel.weight) { accountViewModel.saveAccount() }
         .onChange(of: accountViewModel.height) { accountViewModel.saveAccount() }
-        .onChange(of: accountViewModel.activityFactor) { accountViewModel.saveAccount() }
+    }
+
+    private var notificationBellButton: some View {
+        ZStack(alignment: .topTrailing) {
+            Image(systemName: "bell.fill")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundColor(Theme.Colors.text)
+                .frame(width: 42, height: 42)
+                .background(Theme.Colors.surface2)
+                .clipShape(Circle())
+
+            if notificationStore.unreadCount > 0 {
+                Circle()
+                    .fill(Theme.Colors.tomato)
+                    .frame(width: 9, height: 9)
+                    .offset(x: 2, y: 2)
+            }
+        }
+        .frame(width: 42, height: 42)
     }
 }
 

@@ -25,6 +25,8 @@ Dit plan voegt toe:
 
 ## Supabase: Nieuwe Tabellen
 
+> **Canonieke bron:** de uitvoerbare SQL leeft in [`docs/db/migrations/001-health-extension.sql`](../db/migrations/001-health-extension.sql) (plus [`002-user-water-goal.sql`](../db/migrations/002-user-water-goal.sql) voor het waterdoel). De SQL hieronder is referentie; werk wijzigingen bij in de migratiebestanden, niet hier. Schema-uitleg staat in [`docs/db/health.md`](../db/health.md).
+
 ### 1. `blood_sugar_entries`
 
 ```sql

@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProteinSourcePickerView: View {
+    var dateIso: String?
     @Environment(\.dismiss) var dismiss
     @ObservedObject var viewModel: ProteinViewModel
 
@@ -131,8 +132,15 @@ struct ProteinSourcePickerView: View {
 
     private func addAndDismiss() {
         guard let source = selectedSource, quantityValue > 0 else { return }
-        viewModel.addProtein(source: source, quantity: quantityValue)
-        dismiss()
+        if let dateIso {
+            Task {
+                await viewModel.addProtein(source: source, quantity: quantityValue, to: dateIso)
+                dismiss()
+            }
+        } else {
+            viewModel.addProtein(source: source, quantity: quantityValue)
+            dismiss()
+        }
     }
 }
 

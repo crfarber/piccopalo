@@ -16,10 +16,21 @@ final class SupabaseWaterRepository: WaterRepositoryProtocol {
 
     // MARK: - addWaterEntry
 
-    func addWaterEntry(dayRecordId: UUID, milliliters: Int) async throws -> WaterEntry {
+    func addWaterEntry(
+        dayRecordId: UUID,
+        milliliters: Int,
+        dateISO: String,
+        entryId: UUID? = nil,
+        createdAt: Date? = nil
+    ) async throws -> WaterEntry {
         let uid = try await userId
-        let entry = WaterEntry(dayRecordId: dayRecordId, milliliters: milliliters)
-        let row = SupabaseWaterRow(from: entry, userId: uid)
+        let entry = WaterEntry(
+            id: entryId ?? UUID(),
+            dayRecordId: dayRecordId,
+            milliliters: milliliters,
+            createdAt: createdAt ?? Date()
+        )
+        let row = SupabaseWaterRow(from: entry, userId: uid, dateISO: dateISO)
 
         _ = try await client
             .from("water_entries")
@@ -84,10 +95,10 @@ private struct SupabaseWaterRow: Codable {
         case createdAt = "created_at"
     }
 
-    init(from entry: WaterEntry, userId: String) {
+    init(from entry: WaterEntry, userId: String, dateISO: String) {
         self.id = entry.id.uuidString
         self.userId = userId
-        self.dateISO = Self.todayISO()
+        self.dateISO = dateISO
         self.milliliters = entry.milliliters
         let fmt = ISO8601DateFormatter()
         self.createdAt = fmt.string(from: entry.createdAt)
@@ -103,10 +114,4 @@ private struct SupabaseWaterRow: Codable {
         )
     }
 
-    private static func todayISO() -> String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy-MM-dd"
-        fmt.timeZone = TimeZone.current
-        return fmt.string(from: Date())
-    }
 }

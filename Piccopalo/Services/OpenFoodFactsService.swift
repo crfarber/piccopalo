@@ -25,6 +25,39 @@ struct FoodProduct {
     let name: String
     let proteinPer100g: Double
     let servingSizeGrams: Double?
+    let carbsPer100g: Double?
+    let fiberPer100g: Double?
+    let fatPer100g: Double?
+    let glycemicIndex: Int?
+
+    init(
+        name: String,
+        proteinPer100g: Double,
+        servingSizeGrams: Double?,
+        carbsPer100g: Double? = nil,
+        fiberPer100g: Double? = nil,
+        fatPer100g: Double? = nil,
+        glycemicIndex: Int? = nil
+    ) {
+        self.name = name
+        self.proteinPer100g = proteinPer100g
+        self.servingSizeGrams = servingSizeGrams
+        self.carbsPer100g = carbsPer100g
+        self.fiberPer100g = fiberPer100g
+        self.fatPer100g = fatPer100g
+        self.glycemicIndex = glycemicIndex
+    }
+
+    var glycemicCategory: GICategory {
+        GICategory(glycemicIndex: glycemicIndex)
+    }
+
+    /// Glycemische lading voor een gegeven portie (gram).
+    func glycemicLoad(forPortionGrams grams: Double) -> Double? {
+        guard let gi = glycemicIndex, let carbsPer100 = carbsPer100g, grams > 0 else { return nil }
+        let carbsForPortion = (grams / 100) * carbsPer100
+        return (Double(gi) * carbsForPortion) / 100.0
+    }
 }
 
 struct OpenFoodFactsService {
@@ -45,6 +78,8 @@ struct OpenFoodFactsService {
         guard let url = URL(string: "https://world.openfoodfacts.org/api/v2/product/\(barcode)?fields=product_name,nutriments,serving_size") else {
             throw OpenFoodFactsError.invalidBarcode
         }
+        // nutriments bevat alle voedingswaarden (incl. carbohydrates_100g,
+        // fiber_100g, fat_100g en het zeldzame glycemic_index_100g).
 
         let request = URLRequest(url: url)
 
@@ -67,10 +102,15 @@ struct OpenFoodFactsService {
 
             let name = product.productName?.trimmingCharacters(in: .whitespacesAndNewlines)
             let fallbackName = "Onbekend product"
+            let nutriments = product.nutriments
             return FoodProduct(
                 name: (name?.isEmpty == false ? name! : fallbackName),
                 proteinPer100g: protein,
-                servingSizeGrams: Self.parseServingSizeGrams(product.servingSize)
+                servingSizeGrams: Self.parseServingSizeGrams(product.servingSize),
+                carbsPer100g: nutriments?.carbohydrates100g,
+                fiberPer100g: nutriments?.fiber100g,
+                fatPer100g: nutriments?.fat100g,
+                glycemicIndex: nutriments?.glycemicIndex100g.map { Int($0.rounded()) }
             )
         } catch let error as OpenFoodFactsError {
             throw error
@@ -122,8 +162,16 @@ private struct OpenFoodFactsProduct: Decodable {
 
 private struct OpenFoodFactsNutriments: Decodable {
     let proteins100g: Double?
+    let carbohydrates100g: Double?
+    let fiber100g: Double?
+    let fat100g: Double?
+    let glycemicIndex100g: Double?
 
     enum CodingKeys: String, CodingKey {
         case proteins100g = "proteins_100g"
+        case carbohydrates100g = "carbohydrates_100g"
+        case fiber100g = "fiber_100g"
+        case fat100g = "fat_100g"
+        case glycemicIndex100g = "glycemic_index_100g"
     }
 }

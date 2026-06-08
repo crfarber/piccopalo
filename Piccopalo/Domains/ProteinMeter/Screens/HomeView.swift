@@ -4,22 +4,28 @@ struct HomeView: View {
     @EnvironmentObject var viewModel: ProteinViewModel
     @EnvironmentObject var accountViewModel: AccountViewModel
     @EnvironmentObject var healthManager: HealthManager
+    @EnvironmentObject var healthViewModel: HealthViewModel
     @ObservedObject private var notificationStore = NotificationStore.shared
     @State private var showProteinPicker = false
     @State private var activeScanSheet: ScanSheetState?
     @State private var isLookingUpBarcode = false
-    @State private var showCustomProteinInput = false
+    @State private var showFoodOptions = false
+    @State private var showWaterOptions = false
+    @State private var pendingFoodAction: FoodAction?
     @State private var customProteinInput: String = ""
-    @State private var showCustomWaterInput = false
     @State private var customWaterInput: String = ""
+    @State private var showBloodSugarLog = false
+    @State private var showSymptomLog = false
     @FocusState private var isCustomProteinFocused: Bool
     @FocusState private var isCustomWaterFocused: Bool
 
     private let openFoodFactsService = OpenFoodFactsService()
+    private let proteinQuickAmounts = [10, 20, 30, 40]
+    private let waterQuickAmounts = [150, 250, 500, 1000]
 
-    private enum ManualInputSheetKind {
-        case protein
-        case water
+    private enum FoodAction {
+        case pickFood
+        case scan
     }
 
     private struct ScanSheetState: Identifiable {
@@ -74,8 +80,7 @@ struct HomeView: View {
     }
 
     private func applyScannedProduct(_ product: FoodProduct, quantity: Double) {
-        let source = ProteinSource(name: product.name, proteinPer100g: product.proteinPer100g, unit: .grams)
-        viewModel.addProtein(source: source, quantity: quantity)
+        viewModel.addScannedProduct(product, quantity: quantity)
         activeScanSheet = nil
     }
 
@@ -98,7 +103,14 @@ struct HomeView: View {
         addWater(amount)
         customWaterInput = ""
         isCustomWaterFocused = false
-        showCustomWaterInput = false
+        showWaterOptions = false
+    }
+
+    private func addQuickWater(_ milliliters: Int) {
+        addWater(milliliters)
+        showWaterOptions = false
+        customWaterInput = ""
+        isCustomWaterFocused = false
     }
 
     private func addCustomProtein() {
@@ -109,24 +121,15 @@ struct HomeView: View {
         viewModel.addProtein()
         customProteinInput = ""
         isCustomProteinFocused = false
-        showCustomProteinInput = false
+        showFoodOptions = false
     }
 
-    private func manualInputSheetHeight(for kind: ManualInputSheetKind) -> CGFloat {
-        let screenHeight = UIScreen.main.bounds.height
-        let isVerySmallScreen = screenHeight <= 700
-        let isCompactScreen = screenHeight <= 820
-
-        switch kind {
-        case .protein:
-            if isVerySmallScreen { return 310 }
-            if isCompactScreen { return 285 }
-            return 255
-        case .water:
-            if isVerySmallScreen { return 300 }
-            if isCompactScreen { return 275 }
-            return 245
-        }
+    private func addQuickProtein(_ grams: Int) {
+        viewModel.proteinInput = String(grams)
+        viewModel.addProtein()
+        showFoodOptions = false
+        customProteinInput = ""
+        isCustomProteinFocused = false
     }
 
     private var greeting: String {
@@ -176,15 +179,15 @@ struct HomeView: View {
                             .foregroundColor(Theme.Colors.textMuted)
 
                         Text("Goede ")
-                            .font(.system(size: 26, weight: .bold, design: .default))
+                            .font(.system(size: 20, weight: .bold, design: .default))
                             .foregroundColor(Theme.Colors.text)
                             +
                             Text(greeting + ", ")
-                            .font(.system(size: 26).italic())
+                            .font(.system(size: 20).italic())
                             .foregroundColor(Theme.Colors.text)
-
-                        Text(userName)
-                            .font(.custom(Theme.Typography.displayFont, size: 26).italic())
+                        +
+                            Text(userName)
+                            .font(.custom(Theme.Typography.displayFont, size: 20).italic())
                             .foregroundColor(Theme.Colors.text)
                     }
                     Spacer()
@@ -242,116 +245,47 @@ struct HomeView: View {
                         )
                         .frame(height: 210)
 
-                        HStack(spacing: 0) {
-                            HomeStatColumn(
-                                value: String(format: "%.0fg", viewModel.proteinConsumed),
-                                label: "GEGETEN",
-                                color: Theme.Colors.green
-                            )
-                            Rectangle()
-                                .fill(Color.white.opacity(0.1))
-                                .frame(width: 1, height: 36)
-                            HomeStatColumn(
-                                value: String(format: "%.0fg", viewModel.proteinGoal),
-                                label: "DOEL",
-                                color: Theme.Colors.text
-                            )
-                            Rectangle()
-                                .fill(Color.white.opacity(0.1))
-                                .frame(width: 1, height: 36)
-                            HomeStatColumn(
-                                value: String(format: "%.0fg", viewModel.remaining),
-                                label: "TE GAAN",
-                                color: Theme.Colors.tomato
-                            )
-                        }
-                        Divider()
-
-                        VStack(spacing: Theme.Spacing.sm) {
-                            Text("Protein (gram)")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(Theme.Colors.text)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-
                         HStack(spacing: Theme.Spacing.sm) {
-                            ForEach([10, 20, 30, 40, 50], id: \.self) { amount in
-                                AppButton(
-                                    title: "\(amount)",
-                                    icon: nil,
-                                    size: .small,
-                                    background: Theme.Colors.green.opacity(0.12),
-                                    foreground: Theme.Colors.green,
-                                    cornerStyle: .pill,
-                                    action: {
-                                        viewModel.proteinInput = String(amount)
-                                        viewModel.addProtein()
-                                    }
-                                )
-                            }
                             AppButton(
-                                title: "+",
-                                icon: nil,
-                                size: .small,
-                                background: Theme.Colors.green.opacity(0.12),
+                                title: "Voedsel",
+                                icon: "fork.knife",
+                                size: .fullWidth,
+                                background: Theme.Colors.green.opacity(0.14),
                                 foreground: Theme.Colors.green,
-                                cornerStyle: .pill,
-                                action: { showCustomProteinInput = true }
+                                cornerStyle: .rounded(Theme.Radius.md),
+                                action: { showFoodOptions = true }
                             )
-                            Spacer()
-                        }
 
-
-                        VStack(spacing: Theme.Spacing.sm) {
-                            Text("Water (ml)")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(Theme.Colors.text)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        // Water quick buttons
-                        HStack(spacing: Theme.Spacing.sm) {
-                            ForEach([150, 250, 500, 1000], id: \.self) { ml in
-                                AppButton(
-                                    title: "\(ml)",
-                                    icon: nil,
-                                    size: .small,
-                                    background: Theme.Colors.blue.opacity(0.12),
-                                    foreground: Theme.Colors.blue,
-                                    cornerStyle: .pill,
-                                    action: { addWater(ml) }
-                                )
-                            }
                             AppButton(
-                                title: "+",
-                                icon: nil,
-                                size: .small,
-                                background: Theme.Colors.blue.opacity(0.12),
+                                title: "Water",
+                                icon: "waterbottle.fill",
+                                size: .fullWidth,
+                                background: Theme.Colors.blue.opacity(0.14),
                                 foreground: Theme.Colors.blue,
-                                cornerStyle: .pill,
-                                action: { showCustomWaterInput = true }
+                                cornerStyle: .rounded(Theme.Radius.md),
+                                action: { showWaterOptions = true }
                             )
-                            Spacer()
                         }
 
                         HStack(spacing: Theme.Spacing.sm) {
                             AppButton(
-                                title: "Kies voedsel",
-                                icon: "list.bullet",
+                                title: "Bloedsuiker",
+                                icon: "drop.fill",
                                 size: .fullWidth,
-                                background: Theme.Colors.surface2,
-                                foreground: Theme.Colors.text,
+                                background: Theme.Colors.tomato.opacity(0.14),
+                                foreground: Theme.Colors.tomato,
                                 cornerStyle: .rounded(Theme.Radius.md),
-                                action: { showProteinPicker = true }
+                                action: { showBloodSugarLog = true }
                             )
 
                             AppButton(
-                                title: "Scan",
-                                icon: "barcode.viewfinder",
+                                title: "Gevoel",
+                                icon: "face.smiling",
                                 size: .fullWidth,
-                                background: Theme.Colors.surface2,
-                                foreground: Theme.Colors.text,
+                                background: Theme.Colors.cream.opacity(0.14),
+                                foreground: Theme.Colors.cream,
                                 cornerStyle: .rounded(Theme.Radius.md),
-                                action: { startScanFlow() }
+                                action: { showSymptomLog = true }
                             )
                         }
                     }
@@ -412,6 +346,35 @@ struct HomeView: View {
         .onAppear {
             Task { await healthManager.fetchTodayData() }
         }
+        .sheet(isPresented: $showFoodOptions, onDismiss: {
+            switch pendingFoodAction {
+            case .pickFood: showProteinPicker = true
+            case .scan: startScanFlow()
+            case .none: break
+            }
+            pendingFoodAction = nil
+        }) {
+            HomeFoodSheet(
+                amounts: proteinQuickAmounts,
+                text: $customProteinInput,
+                fieldFocus: $isCustomProteinFocused,
+                onQuickAdd: addQuickProtein,
+                onCustomAdd: addCustomProtein,
+                onPickFood: { pendingFoodAction = .pickFood; showFoodOptions = false },
+                onScan: { pendingFoodAction = .scan; showFoodOptions = false }
+            )
+            .adaptiveBottomSheet()
+        }
+        .sheet(isPresented: $showWaterOptions) {
+            HomeWaterSheet(
+                amounts: waterQuickAmounts,
+                text: $customWaterInput,
+                fieldFocus: $isCustomWaterFocused,
+                onQuickAdd: addQuickWater,
+                onCustomAdd: addCustomWater
+            )
+            .adaptiveBottomSheet()
+        }
         .sheet(isPresented: $showProteinPicker) {
             ProteinSourcePickerView(viewModel: viewModel)
         }
@@ -442,139 +405,29 @@ struct HomeView: View {
                     onRetry: { startScanFlow() },
                     onManualEntry: {
                         activeScanSheet = nil
-                        showCustomProteinInput = true
+                        showFoodOptions = true
                     },
                     onCancel: { activeScanSheet = nil }
                 )
             }
         }
-        .sheet(isPresented: $showCustomProteinInput) {
-            VStack(spacing: Theme.Spacing.lg) {
-                Text("Voeg eiwit toe")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Theme.Colors.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack(spacing: Theme.Spacing.sm) {
-                    TextInput(
-                        label: "",
-                        text: $customProteinInput,
-                        placeholder: "0",
-                        unit: "gram",
-                        keyboard: .decimal,
-                        textInputAutocapitalization: .never,
-                        disableAutocorrection: true,
-                        fieldFocus: $isCustomProteinFocused
-                    )
-                    .onChange(of: customProteinInput) {
-                        let filtered = customProteinInput.filter { "0123456789.,".contains($0) }
-                        if filtered.filter({ $0 == "." || $0 == "," }).count > 1 {
-                            let normalized = filtered.replacingOccurrences(of: ",", with: ".")
-                            customProteinInput = String(normalized.prefix(while: { $0 != "." }))
-                                + "."
-                                + normalized.drop(while: { $0 != "." }).dropFirst().filter { $0 != "." }
-                        } else {
-                            customProteinInput = filtered
-                        }
-                    }
-
-                    AppButton(
-                        title: nil,
-                        icon: "plus",
-                        size: .square(58),
-                        background: Theme.Colors.green,
-                        foreground: Theme.Colors.background,
-                        cornerStyle: .rounded(Theme.Radius.md),
-                        action: { addCustomProtein() }
-                    )
-                }
-
-                HStack(spacing: Theme.Spacing.sm) {
-                    AppButton(
-                        title: "Annuleer",
-                        icon: nil,
-                        size: .fullWidth,
-                        background: Theme.Colors.surface2,
-                        foreground: Theme.Colors.text,
-                        cornerStyle: .rounded(Theme.Radius.md),
-                        action: {
-                            showCustomProteinInput = false
-                            customProteinInput = ""
-                            isCustomProteinFocused = false
-                        }
-                    )
-                }
+        .sheet(isPresented: $showBloodSugarLog) {
+            NavigationStack {
+                BloodSugarLogView().environmentObject(healthViewModel)
             }
-            .padding(Theme.Spacing.lg)
-            .background(Theme.Colors.background)
-            .presentationDetents([.height(manualInputSheetHeight(for: .protein))])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(Theme.Colors.background)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    isCustomProteinFocused = true
-                }
-            }
+            .adaptiveBottomSheet(
+                extraHeight: AdaptiveBottomSheetMetrics.navigationBarHeight,
+                wrapsContent: false
+            )
         }
-        .sheet(isPresented: $showCustomWaterInput) {
-            VStack(spacing: Theme.Spacing.lg) {
-                Text("Voeg water toe")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Theme.Colors.text)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                HStack(spacing: Theme.Spacing.sm) {
-                    TextInput(
-                        label: "",
-                        text: $customWaterInput,
-                        placeholder: "0",
-                        unit: "ml",
-                        keyboard: .integer,
-                        textInputAutocapitalization: .never,
-                        disableAutocorrection: true,
-                        fieldFocus: $isCustomWaterFocused
-                    )
-                    .onChange(of: customWaterInput) {
-                        customWaterInput = customWaterInput.filter { "0123456789".contains($0) }
-                    }
-
-                    AppButton(
-                        title: nil,
-                        icon: "plus",
-                        size: .square(58),
-                        background: Theme.Colors.blue,
-                        foreground: Theme.Colors.background,
-                        cornerStyle: .rounded(Theme.Radius.md),
-                        action: { addCustomWater() }
-                    )
-                }
-
-                HStack(spacing: Theme.Spacing.sm) {
-                    AppButton(
-                        title: "Annuleer",
-                        icon: nil,
-                        size: .fullWidth,
-                        background: Theme.Colors.surface2,
-                        foreground: Theme.Colors.text,
-                        cornerStyle: .rounded(Theme.Radius.md),
-                        action: {
-                            showCustomWaterInput = false
-                            customWaterInput = ""
-                            isCustomWaterFocused = false
-                        }
-                    )
-                }
+        .sheet(isPresented: $showSymptomLog) {
+            NavigationStack {
+                SymptomLogView().environmentObject(healthViewModel)
             }
-            .padding(Theme.Spacing.lg)
-            .background(Theme.Colors.background)
-            .presentationDetents([.height(manualInputSheetHeight(for: .water))])
-            .presentationDragIndicator(.visible)
-            .presentationBackground(Theme.Colors.background)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    isCustomWaterFocused = true
-                }
-            }
+            .adaptiveBottomSheet(
+                extraHeight: AdaptiveBottomSheetMetrics.navigationBarHeight,
+                wrapsContent: false
+            )
         }
     }
 }
@@ -611,4 +464,8 @@ private struct HomeStatColumn: View {
         ))
         .environmentObject(AuthViewModel())
         .environmentObject(HealthManager())
+        .environmentObject(HealthViewModel(
+            bloodSugarRepository: SupabaseBloodSugarRepository(),
+            symptomRepository: SupabaseSymptomRepository()
+        ))
 }

@@ -314,6 +314,35 @@ class HealthManager: NSObject, ObservableObject {
         }
     }
     
+    /// Step count for one calendar day. For today, counts from midnight until now.
+    func fetchStepCount(for date: Date) async -> Int? {
+        guard isAuthorized else { return nil }
+
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: date)
+        let todayStart = calendar.startOfDay(for: Date())
+
+        if startOfDay > todayStart {
+            return 0
+        }
+
+        let end: Date
+        if calendar.isDateInToday(date) {
+            end = Date()
+        } else {
+            end = calendar.date(byAdding: .day, value: 1, to: startOfDay) ?? startOfDay
+        }
+
+        let predicate = HKQuery.predicateForSamples(withStart: startOfDay, end: end)
+        let result = await safeCumulativeSum(
+            label: "steps",
+            for: .stepCount,
+            unit: HKUnit.count(),
+            predicate: predicate
+        )
+        return Int(result.value)
+    }
+
     /// Fetches today's step count with a callback
     /// Used by NotificationService for background notifications
     func getTodaySteps(completion: @escaping (Double) -> Void) {
